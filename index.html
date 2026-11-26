@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b4f14">
+<title>ตัดต่อคลิป · Delish Foods</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&family=Prompt:wght@400;700;800&family=Sarabun:wght@400;700&family=Mitr:wght@400;600&family=Noto+Sans+Thai:wght@400;700;900&family=Bai+Jamjuree:wght@400;700&family=Chakra+Petch:wght@400;700&family=Mali:wght@400;700&family=Itim&family=Sriracha&family=Anuphan:wght@400;700&family=IBM+Plex+Sans+Thai:wght@400;700&family=Athiti:wght@400;700&family=K2D:wght@400;800&family=Chonburi&family=Pattaya&display=swap">
+<style>
+@font-face { font-family: 'Loma'; src: url('fonts/Loma-Regular.otf'); font-weight: 400; }
+@font-face { font-family: 'Loma'; src: url('fonts/Loma-Bold.otf'); font-weight: 700; }
+@font-face { font-family: 'Poppins'; src: url('fonts/Poppins-Regular.ttf'); font-weight: 400; }
+@font-face { font-family: 'Poppins'; src: url('fonts/Poppins-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'Anton'; src: url('fonts/Anton-Regular.ttf'); font-weight: 400; }
+:root { --df: #0b4f14; --df2: #1a7a3c; --green: #22a050; --gl: #e8f5ee; --bd: #d3e4d8; --tx: #13261b; --mu: #5d7465; --red: #c0392b; --bg: #f1f6f2; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.45 'Sarabun', 'Loma', system-ui, sans-serif; }
+button, input, select, textarea { font: inherit; color: inherit; }
+.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; background: linear-gradient(135deg, var(--df), var(--df2)); color: #fff; }
+.top a.home { flex: none; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3); display: grid; place-items: center; text-decoration: none; font-size: 19px; }
+.top .t1 { font-weight: 800; font-size: 17px; line-height: 1.2; } .top .t2 { font-size: 12.5px; opacity: .8; } .top .sp { flex: 1; }
+.top select { background: rgba(255,255,255,.15); color: #fff; border: 1.5px solid rgba(255,255,255,.35); border-radius: 10px; padding: 6px 8px; } .top select option { color: #000; }
+.wrap { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 14px; max-width: 1320px; margin: 0 auto; padding: 14px; }
+@media (max-width: 920px) { .wrap { grid-template-columns: 1fr; padding: 10px; } }
+.stage { background: #10241a; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; align-self: start; }
+@media (min-width: 921px) { .stage { position: sticky; top: 76px; } }
+.view { display: flex; align-items: center; justify-content: center; height: min(64vh, 700px); }
+@media (max-width: 920px) { .view { height: 50vh; } }
+#cv { max-width: 100%; max-height: 100%; background: #000; border-radius: 6px; }
+.ctrl { display: flex; align-items: center; gap: 8px; color: #fff; flex-wrap: wrap; }
+.ctrl .pb { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--green); color: #fff; font-size: 20px; cursor: pointer; flex: none; }
+.ctrl input[type=range] { flex: 1; accent-color: #4cd07d; min-width: 120px; }
+.ctrl .tm { font-variant-numeric: tabular-nums; font-size: 13px; min-width: 92px; text-align: right; }
+.ctrl .ib { border: 1.5px solid rgba(255,255,255,.3); background: rgba(255,255,255,.1); color: #fff; border-radius: 10px; padding: 6px 9px; cursor: pointer; font-weight: 700; font-size: 13px; }
+.tracks { display: flex; flex-direction: column; gap: 3px; position: relative; }
+.trk { display: flex; gap: 2px; height: 22px; border-radius: 5px; overflow: hidden; position: relative; background: rgba(255,255,255,.06); }
+.trk div { color: #d8f3e2; font-size: 10.5px; padding: 3px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.trk.v div { background: #2f6d48; } .trk.v div.on { background: #4cd07d; color: #062; font-weight: 700; }
+.trk.s div { position: absolute; top: 0; bottom: 0; background: #d9a400; color: #231a00; border-radius: 3px; }
+.trk.a canvas { width: 100%; height: 100%; display: block; }
+.trk label { position: absolute; left: 4px; top: 3px; font-size: 10px; color: #9fd8b4; pointer-events: none; z-index: 2; }
+.ph { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff5252; pointer-events: none; z-index: 3; }
+.panel { background: #fff; border: 1px solid var(--bd); border-radius: 14px; overflow: hidden; align-self: start; }
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--bd); background: #f7fbf8; }
+.tabs button { border: 0; background: none; padding: 9px 2px 7px; font-size: 12.5px; font-weight: 700; color: var(--mu); border-bottom: 3px solid transparent; cursor: pointer; }
+.tabs button b { display: block; font-size: 19px; line-height: 1.1; } .tabs button.on { color: var(--df); border-bottom-color: var(--green); background: #fff; }
+.pane { padding: 14px; display: none; } .pane.on { display: block; }
+h3 { margin: 0 0 8px; font-size: 15px; color: var(--df); } h3 .st { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--df2); color: #fff; font-size: 13px; margin-right: 4px; }
+.step { border: 1.5px solid var(--bd); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+.lbl { display: block; font-size: 13px; font-weight: 700; color: var(--mu); margin: 10px 0 4px; }
+.btn { border: 1.5px solid var(--bd); background: #fff; border-radius: 10px; padding: 7px 11px; font-weight: 700; cursor: pointer; min-height: 38px; }
+.btn:active { transform: scale(.97); } .btn:disabled { opacity: .45; }
+.btn.p { background: linear-gradient(135deg, var(--df2), var(--green)); color: #fff; border-color: transparent; }
+.btn.s { background: var(--gl); color: var(--df); border-color: #b9dcc4; } .btn.d { color: var(--red); border-color: #f1c0ba; } .btn.full { width: 100%; }
+.btn.sm { min-height: 30px; padding: 3px 8px; font-size: 13px; } .btn.big { min-height: 54px; font-size: 17px; }
+.in { width: 100%; border: 1.5px solid var(--bd); border-radius: 10px; padding: 7px 9px; background: #fff; }
+textarea.in { resize: vertical; line-height: 1.55; }
+input[type=range] { width: 100%; accent-color: var(--green); } input[type=color] { width: 42px; height: 38px; border: 1.5px solid var(--bd); border-radius: 10px; padding: 2px; background: #fff; }
+.drop { border: 2px dashed #9cc9aa; background: var(--gl); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--df); }
+.note { font-size: 12.5px; color: var(--mu); margin: 6px 0; }
+.ok { color: var(--df2); font-weight: 700; }
+.pool { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+.pool .it { position: relative; aspect-ratio: 9/14; border-radius: 8px; overflow: hidden; background: #1c3326; border: 1.5px solid var(--bd); }
+.pool .it img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pool .it b { position: absolute; left: 4px; top: 4px; background: var(--df); color: #fff; border-radius: 6px; font-size: 12px; padding: 0 6px; }
+.pool .it small { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.6); color: #fff; font-size: 10.5px; padding: 1px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pool .it .x { position: absolute; right: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: rgba(192,57,43,.9); color: #fff; font-size: 11px; line-height: 20px; padding: 0; cursor: pointer; }
+.clip { border: 1.5px solid var(--bd); border-radius: 12px; padding: 9px; margin-top: 8px; background: #fff; }
+.clip.on { border-color: var(--green); box-shadow: 0 0 0 2px rgba(34,160,80,.2); }
+.clip .hd { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.clip .hd b { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; }
+.clip .hd .n { width: 26px; height: 26px; border-radius: 8px; background: var(--df2); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 800; flex: none; }
+.clip .bd { display: none; } .clip.on .bd { display: block; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .g2 label { font-size: 12.5px; color: var(--mu); font-weight: 700; }
+.sub { border: 1.5px solid var(--bd); border-radius: 10px; padding: 6px; margin: 6px 0; }
+.sub.on { border-color: var(--green); background: var(--gl); }
+.sub .r1 { display: grid; grid-template-columns: 62px 62px 1fr 26px; gap: 5px; align-items: center; }
+.sub input, .sub select { border: 1.5px solid var(--bd); border-radius: 8px; padding: 4px 6px; min-width: 0; background: #fff; }
+.sub .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
+.sub button.x { border: 0; background: none; color: var(--red); font-size: 16px; cursor: pointer; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips button { border: 1.5px solid var(--bd); background: #fff; border-radius: 99px; padding: 5px 10px; font-weight: 700; cursor: pointer; font-size: 13px; }
+.chips button.on { background: var(--df2); color: #fff; border-color: var(--df2); }
+.lib { display: flex; flex-direction: column; gap: 6px; }
+.lib .li { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--bd); border-radius: 10px; padding: 6px 8px; }
+.lib .li.on { border-color: var(--green); background: var(--gl); }
+.lib .li span { flex: 1; font-weight: 700; } .lib .li small { color: var(--mu); }
+.help { background: #f7fbf8; border: 1px solid var(--bd); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: var(--mu); line-height: 1.6; }
+.help code { background: #e3efe7; border-radius: 5px; padding: 0 4px; color: var(--df); font-weight: 700; }
+.res { background: var(--gl); border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 13.5px; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(30px); opacity: 0; background: #13261b; color: #fff; padding: 10px 16px; border-radius: 12px; z-index: 99; transition: .25s; font-weight: 700; max-width: 90vw; }
+.toast.show { opacity: 1; transform: translateX(-50%); } .toast.err { background: var(--red); }
+.busy { position: fixed; inset: 0; z-index: 60; background: rgba(10,25,15,.7); display: flex; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 20px; }
+.busy .bx { background: #13261b; border-radius: 16px; padding: 22px 26px; min-width: 280px; }
+.bar { height: 10px; border-radius: 99px; background: rgba(255,255,255,.15); overflow: hidden; margin: 12px 0 8px; } .bar i { display: block; height: 100%; background: #4cd07d; width: 0; }
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="home" href="https://suphatsonw-glitch.github.io/homepage/" title="หน้าโฮม">🏠</a>
+  <div><div class="t1">ตัดต่อคลิป</div><div class="t2">สคริปต์ + เสียงพากย์ → ตัดคลิปเบื้องต้นอัตโนมัติ · ซับไทย · เพลง · เอฟเฟกต์</div></div>
+  <div class="sp"></div>
+  <select id="aspect" title="สัดส่วนวิดีโอ"><option value="720x1280">9:16 (TikTok/Reels)</option><option value="1080x1080">1:1 (โพสต์)</option><option value="1280x720">16:9 (YouTube)</option></select>
+</div>
+<div class="wrap">
+  <div class="stage">
+    <div class="view"><canvas id="cv" width="720" height="1280"></canvas></div>
+    <div class="tracks" id="tracks">
+      <div class="trk v" id="trkV"></div>
+      <div class="trk s" id="trkS"><label>ซับ</label></div>
+      <div class="trk a" id="trkA"><label>เสียงพากย์</label><canvas id="wave" height="22"></canvas></div>
+      <div class="ph" id="ph"></div>
+    </div>
+    <div class="ctrl">
+      <button type="button" class="pb" id="play" title="เล่น / หยุด (Space)">▶</button>
+      <input type="range" id="seek" min="0" max="1000" value="0" step="1">
+      <span class="tm" id="tm">0:00.0 / 0:00.0</span>
+    </div>
+    <div class="ctrl"><button type="button" class="ib" id="split">✂️ แยกคลิปตรงนี้</button><button type="button" class="ib" id="subhere">💬 ซับตรงนี้</button><button type="button" class="ib" id="sfxhere">🔊 เสียงเอฟเฟกต์ตรงนี้</button><span style="flex:1"></span>
+      <label style="font-size:13px">ภาพ <select id="fitmode" class="ib" style="padding:4px"><option value="blur">พอดี + พื้นเบลอ</option><option value="cover">เต็มจอ (ครอป)</option><option value="contain">พอดี + พื้นดำ</option></select></label></div>
+  </div>
+  <div class="panel">
+    <div class="tabs" id="tabs"><button type="button" data-tab="script" class="on"><b>📝</b>สคริปต์</button><button type="button" data-tab="clips"><b>🎬</b>คลิป</button><button type="button" data-tab="subs"><b>💬</b>ซับ</button><button type="button" data-tab="sound"><b>🎵</b>เสียง</button><button type="button" data-tab="out"><b>⬇️</b>ส่งออก</button></div>
+
+    <div class="pane on" id="p-script">
+      <button type="button" class="btn s full" id="demo">🎞️ ลองด้วยตัวอย่าง (เสียงพากย์ + สคริปต์ + ภาพ มะพร้าวเผา)</button>
+      <div class="step" style="margin-top:12px"><h3><span class="st">1</span>เสียงพากย์</h3>
+        <div class="drop" id="vadd">🎙️ นำเข้าไฟล์เสียงพากย์ (mp3 / m4a / wav หรือวิดีโอที่มีเสียง)</div><input type="file" id="vfile" accept="audio/*,video/*" hidden>
+        <p class="note" id="vinfo">ยังไม่มีเสียงพากย์ · ไม่มีก็ได้ แอปจะประมาณเวลาจากความยาวข้อความ</p></div>
+      <div class="step"><h3><span class="st">2</span>สคริปต์ / สตอรี่บอร์ด</h3>
+        <textarea class="in" id="script" rows="7" placeholder="1 บรรทัด = 1 ประโยคที่พากย์ (กลายเป็นซับไทย)&#10;# ข้อความหัวเรื่อง (ขึ้นจอ ไม่ได้พากย์)&#10;[1] ประโยคแรก ใช้ภาพที่ 1&#10;[2,3] ประโยคนี้ตัดสลับภาพ 2 กับ 3&#10;ประโยคที่ไม่ระบุภาพ แอปเลือกภาพถัดไปให้"></textarea>
+        <details class="help" style="margin-top:6px"><summary style="cursor:pointer;font-weight:700">วิธีเขียนสคริปต์</summary>
+          • 1 บรรทัด = 1 ประโยคที่พากย์ แอปหาช่วงหยุดหายใจในเสียงพากย์ แล้ววางซับและตัดภาพให้ตรงแต่ละประโยค<br>
+          • <code>[2]</code> หน้าประโยค = ใช้ภาพ/คลิปหมายเลข 2 · <code>[2,3]</code> = ตัดสลับภาพ 2 และ 3 ในประโยคนั้น<br>
+          • <code># ข้อความ</code> = หัวเรื่องตัวใหญ่ด้านบน ขึ้นพร้อมประโยคถัดไป (ไม่ต้องพากย์)<br>
+          • ไม่ใส่หมายเลข = แอปใช้ภาพถัดไปตามลำดับ · คลิปเดียวกันใช้หลายประโยค จะต่อจากช่วงที่ใช้ไปแล้ว</details></div>
+      <div class="step"><h3><span class="st">3</span>ภาพและคลิป <small class="note">(เลขบนรูป = เลขที่ใช้ในสคริปต์)</small></h3>
+        <div class="drop" id="madd">🖼️ เพิ่มวิดีโอ / รูป (หลายไฟล์ได้)</div><input type="file" id="mfiles" accept="video/*,image/*" multiple hidden>
+        <div class="pool" id="pool"></div></div>
+      <div class="step"><h3><span class="st">4</span>สไตล์คลิป</h3>
+        <label class="lbl" style="margin-top:0">จังหวะตัดภาพ</label>
+        <div class="chips" id="pace"><button type="button" data-v="0">ตามประโยค</button><button type="button" data-v="3.5" class="on">ปานกลาง (≤3.5 วิ)</button><button type="button" data-v="1.8">เร็ว (≤1.8 วิ)</button></div>
+        <div class="g2" style="margin-top:8px"><label>เปลี่ยนฉาก<select class="in" id="btrans"></select></label><label>สไตล์ซับ<select class="in" id="bstyle"></select></label></div>
+        <div class="g2" style="margin-top:8px"><label>เพลงประกอบ<select class="in" id="bmusic"></select></label><label>เสียงจากคลิปเดิม<select class="in" id="bclipvol"><option value="0">ปิด (ใช้เสียงพากย์)</option><option value="0.2">เบา ๆ 20%</option><option value="1">ปกติ</option></select></label></div>
+        <label class="note" style="display:block;margin-top:8px"><input type="checkbox" id="bwhoosh" checked> ใส่เสียงวูบตอนเปลี่ยนฉาก</label>
+        <label class="note" style="display:block"><input type="checkbox" id="bding" checked> ใส่เสียงติ๊งตอนหัวเรื่องขึ้น</label>
+      </div>
+      <button type="button" class="btn p full big" id="build">🤖 สร้างคลิปเบื้องต้นจากสคริปต์</button>
+      <div id="bres"></div>
+    </div>
+
+    <div class="pane" id="p-clips">
+      <div class="drop" id="add">➕ เพิ่มวิดีโอ / รูป ต่อท้าย</div>
+      <input type="file" id="files" accept="video/*,image/*" multiple hidden>
+      <div class="row"><label style="flex:1" class="note">ระดับเสียงที่ถือว่า "เงียบ" <b id="v-thr">-40 dB</b><input type="range" id="thr" min="-60" max="-20" value="-40"></label></div>
+      <button type="button" class="btn s full" id="autoall">✂️ ตัดช่วงเงียบในคลิปอัตโนมัติ (คลิปที่มีคนพูดเอง)</button>
+      <div class="row"><button type="button" class="btn full" id="glxload">🌐 โหลดเอฟเฟกต์เปลี่ยนฉากเพิ่ม (GL Transitions ~100 แบบ · ฟรี)</button></div>
+      <p class="note" id="glxinfo"></p>
+      <div class="row"><label class="note" style="flex:1">เปลี่ยนฉากทุกคลิป <select class="in" id="transall" style="margin-top:3px"></select></label><label class="note" style="flex:1">เอฟเฟกต์สีทุกคลิป <select class="in" id="filtall" style="margin-top:3px"></select></label></div>
+      <div id="clips"></div>
+    </div>
+
+    <div class="pane" id="p-subs">
+      <div class="row"><button type="button" class="btn p" id="subadd">➕ ซับตรงที่เล่น</button><button type="button" class="btn" id="titleadd">➕ หัวเรื่อง</button><button type="button" class="btn" id="srtin">⬆️ .srt</button><button type="button" class="btn" id="srtout">⬇️ .srt</button></div>
+      <input type="file" id="srtfile" accept=".srt,.txt" hidden>
+      <h3 style="margin-top:6px">สไตล์ซับหลัก</h3>
+      <div class="chips" id="stylechips"></div>
+      <div class="g2" style="margin-top:8px"><label>ฟอนต์<select class="in" id="sfont"></select></label><label>ตำแหน่ง<select class="in" id="spos"><option value="bottom">ด้านล่าง</option><option value="lower">ค่อนล่าง</option><option value="middle">กลางจอ</option><option value="top">ด้านบน</option></select></label></div>
+      <label class="lbl">ขนาด <b id="v-ssz">6</b></label><input type="range" id="ssz" min="3" max="12" step="0.5" value="6">
+      <div class="row"><label>สีตัวอักษร <input type="color" id="scol" value="#ffffff"></label><label>สีเน้น <input type="color" id="shl" value="#0b4f14"></label><label class="note"><input type="checkbox" id="sanim" checked> เด้งเข้า</label></div>
+      <div class="note">แต่ละบรรทัดเลือกสไตล์/ตำแหน่งแยกได้ (ว่าง = ใช้สไตล์หลัก) · แตะช่องเวลาเพื่อกระโดดไปตรงนั้น</div>
+      <div id="subs"></div>
+    </div>
+
+    <div class="pane" id="p-sound">
+      <h3>🎙️ เสียงพากย์</h3>
+      <p class="note" id="vinfo2">ยังไม่มี (นำเข้าที่แท็บ สคริปต์)</p>
+      <label class="lbl">ระดับเสียงพากย์ <b id="v-vvol">100%</b></label><input type="range" id="vvol" min="0" max="200" value="100">
+      <h3 style="margin-top:14px">🎵 เพลงประกอบ</h3>
+      <div class="lib" id="mlib"></div>
+      <div class="row"><button type="button" class="btn" id="mup">⬆️ ใช้เพลงของฉัน</button><button type="button" class="btn d" id="mdel">ไม่ใช้เพลง</button></div><input type="file" id="mfile" accept="audio/*" hidden>
+      <p class="note" id="mname">ยังไม่มีเพลง</p>
+      <label class="lbl">เสียงเพลง <b id="v-mvol">35%</b></label><input type="range" id="mvol" min="0" max="100" value="35">
+      <label class="note"><input type="checkbox" id="mduck" checked> ลดเสียงเพลงอัตโนมัติตอนมีเสียงพูด</label><br>
+      <label class="note"><input type="checkbox" id="mfade" checked> ค่อย ๆ เบาเพลงลงตอนจบ</label>
+      <label class="lbl">เสียงจากคลิปทั้งหมด <b id="v-cvol">100%</b></label><input type="range" id="cvol" min="0" max="150" value="100">
+      <h3 style="margin-top:14px">🔊 เสียงเอฟเฟกต์</h3>
+      <p class="note" style="margin-top:0">กด ▶ ฟัง · กด ➕ ใส่ตรงตำแหน่งที่เล่น</p>
+      <div class="lib" id="slib"></div>
+      <div id="sfxlist" style="margin-top:8px"></div>
+      <p class="note">เพลงและเสียงเอฟเฟกต์ในแอปสร้างขึ้นเองสำหรับ Delish Foods ใช้ได้ฟรีไม่ติดลิขสิทธิ์ · เพลงเพิ่มเติมโหลดฟรีที่ Pixabay Music / Mixkit แล้วกด "ใช้เพลงของฉัน"</p>
+    </div>
+
+    <div class="pane" id="p-out">
+      <h3>ส่งออกวิดีโอ</h3>
+      <label class="note"><input type="checkbox" id="fadein" checked> เปิดคลิปจากจอดำ (Fade in)</label><br>
+      <label class="note"><input type="checkbox" id="fadeout" checked> จบคลิปค่อย ๆ มืด (Fade out)</label>
+      <label class="lbl">ชื่อไฟล์</label><input class="in" id="oname" placeholder="เช่น coconut-reel">
+      <label class="lbl">คุณภาพ</label><select class="in" id="oq"><option value="8000000">สูง (ไฟล์ใหญ่)</option><option value="5000000" selected>ปกติ</option><option value="2500000">ประหยัด (ส่งแชตเร็ว)</option></select>
+      <button type="button" class="btn p full big" id="export" style="margin-top:12px">🎬 สร้างไฟล์วิดีโอ</button>
+      <p class="note" id="fmtnote"></p>
+      <p class="note">ระหว่างส่งออก แอปเล่นคลิปทั้งเรื่องหนึ่งรอบเพื่อบันทึก (ใช้เวลาเท่าความยาวคลิป) อย่าสลับแอป/ปิดจอระหว่างนี้</p>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function () {
+  'use strict'
+  const $ = (q, el) => (el || document).querySelector(q), $$ = (q, el) => Array.from((el || document).querySelectorAll(q))
+  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+  const uid = () => Math.random().toString(36).slice(2, 9)
+  const r2 = (x) => Math.round(x * 100) / 100
+  const fmt = (t) => { t = Math.max(0, t || 0); const m = Math.floor(t / 60), s = t - m * 60; return m + ':' + (s < 10 ? '0' : '') + s.toFixed(1) }
+  function toast(m, err, ms) { const t = $('#toast'); t.textContent = m; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => { t.className = 'toast' }, ms || 2600) }
+  const opt = (L, v) => L.map((x) => '<option value="' + x[0] + '"' + (x[0] === v ? ' selected' : '') + '>' + x[1] + '</option>').join('')
+
+  const FILTERS = [['none', 'ไม่มี'], ['vivid', 'สดใส'], ['warm', 'อบอุ่น'], ['cool', 'โทนเย็น'], ['bright', 'สว่างขึ้น'], ['vintage', 'วินเทจ'], ['bw', 'ขาวดำ']]
+  const FCSS = { none: 'none', vivid: 'saturate(1.35) contrast(1.08)', warm: 'sepia(.22) saturate(1.25) brightness(1.03)', cool: 'hue-rotate(-12deg) saturate(1.1) brightness(1.04)', bright: 'brightness(1.15) contrast(1.03)', vintage: 'sepia(.45) contrast(.92) brightness(1.05) saturate(.9)', bw: 'grayscale(1) contrast(1.1)' }
+  const TRANS = [['none', 'ตัดตรง'], ['fade', 'จางซ้อน'], ['zoomblur', 'ซูมเบลอ'], ['whip', 'ปัดเร็ว'], ['tear', 'ฉีกกระดาษ'], ['slide', 'เลื่อนเข้า'], ['zoom', 'ซูมเข้า'], ['wipe', 'ปาดข้าง'], ['black', 'ผ่านจอดำ']]
+  /* ---------- เอฟเฟกต์เปลี่ยนฉากแบบ GPU (WebGL) เขียนรูปแบบเดียวกับ GL Transitions ---------- */
+  const RND = 'float rnd(vec2 co){return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);}\n'
+  const GLFX = {
+    circleopen: ['วงกลมเปิด', 'vec4 transition(vec2 uv){vec2 d=(uv-.5)*vec2(ratio,1.);float r=length(d),m=sqrt(ratio*ratio+1.)/2.;float x=smoothstep(progress*m-.04,progress*m+.001,r);return mix(getToColor(uv),getFromColor(uv),x);}'],
+    radial: ['กวาดรอบนาฬิกา', 'vec4 transition(vec2 uv){vec2 d=uv-.5;float t=(atan(d.x,d.y)+3.14159265)/6.2831853;float e=smoothstep(t-.03,t+.03,progress*1.06-.03);return mix(getFromColor(uv),getToColor(uv),e);}'],
+    pixelize: ['พิกเซลแตก', 'vec4 transition(vec2 uv){float k=1.-min(progress,1.-progress)*2.;float n=mix(14.,420.,k*k*k);vec2 g=vec2(n*ratio,n);vec2 p=(floor(uv*g)+.5)/g;return mix(getFromColor(p),getToColor(p),smoothstep(.42,.58,progress));}'],
+    ripple: ['คลื่นน้ำ', 'vec4 transition(vec2 uv){vec2 d=uv-.5;float dist=length(d*vec2(ratio,1.));vec2 o=normalize(d+1e-5)*sin(dist*90.-progress*45.)*.03*progress*(1.-progress)*4.;return mix(getFromColor(uv+o),getToColor(uv+o),smoothstep(.2,.8,progress));}'],
+    swirl: ['หมุนวน', 'vec4 transition(vec2 uv){vec2 c=uv-.5;c.x*=ratio;float d=length(c);float a=sin(progress*3.14159)*9.*max(0.,.9-d);float cs=cos(a),sn=sin(a);c=vec2(c.x*cs-c.y*sn,c.x*sn+c.y*cs);c.x/=ratio;vec2 p=c+.5;return mix(getFromColor(p),getToColor(p),smoothstep(.35,.65,progress));}'],
+    dreamy: ['ฝันพลิ้ว', 'vec4 transition(vec2 uv){float s=sin(progress*3.14159);vec2 o=vec2(sin(uv.y*24.+progress*14.)*.035*s,0.);return mix(getFromColor(uv+o),getToColor(uv+o),progress);}'],
+    crosswarp: ['บิดข้ามจอ', 'vec4 transition(vec2 uv){float x=smoothstep(0.,1.,progress*2.+uv.x-1.);return mix(getFromColor((uv-.5)*(1.-x)+.5),getToColor((uv-.5)*x+.5),x);}'],
+    wind: ['ลมพัด', RND + 'vec4 transition(vec2 uv){float sz=.25;float r=rnd(vec2(0.,uv.y));float m=smoothstep(0.,-sz,uv.x*(1.-sz)+sz*r-(progress*(1.+sz)));return mix(getFromColor(uv),getToColor(uv),m);}'],
+    dblur: ['สะบัดเบลอ', 'vec4 transition(vec2 uv){float s=sin(progress*3.14159);vec4 a=vec4(0.),b=vec4(0.);for(int i=0;i<16;i++){float t=float(i)/15.-.5;vec2 o=vec2(t*.3*s,0.);a+=getFromColor(uv+o);b+=getToColor(uv+o);}return mix(a/16.,b/16.,smoothstep(.3,.7,progress));}'],
+    glitch: ['กลิตช์', RND + 'vec4 transition(vec2 uv){float s=sin(progress*3.14159);float blk=floor(uv.y*24.);float f=floor(progress*16.);float sh=(rnd(vec2(blk,f))-.5)*.3*s*step(.55,rnd(vec2(blk,f+3.)));vec2 p=uv+vec2(sh,0.);float rs=.025*s;if(progress<.5)return vec4(getFromColor(p+vec2(rs,0.)).r,getFromColor(p).g,getFromColor(p-vec2(rs,0.)).b,1.);return vec4(getToColor(p+vec2(rs,0.)).r,getToColor(p).g,getToColor(p-vec2(rs,0.)).b,1.);}'],
+    flash: ['แฟลชขาว', 'vec4 transition(vec2 uv){float f=1.-abs(progress-.5)*2.;vec4 c=mix(getFromColor(uv),getToColor(uv),smoothstep(.45,.55,progress));return mix(c,vec4(1.),pow(f,1.6));}'],
+    doors: ['ประตูเปิด', 'vec4 transition(vec2 uv){float p=progress*progress*(3.-2.*progress);if(uv.x<.5){float x=uv.x+p*.5;if(x<.5)return getFromColor(vec2(x,uv.y));}else{float x=uv.x-p*.5;if(x>.5)return getFromColor(vec2(x,uv.y));}return getToColor(uv);}'],
+    heart: ['หัวใจ', 'float inHeart(vec2 p,vec2 c,float s){if(s<=0.)return 0.;vec2 o=(p-c)/(1.7*s);float a=o.x*o.x+o.y*o.y-.3;return step(a*a*a,o.x*o.x*o.y*o.y*o.y);}vec4 transition(vec2 uv){vec2 p=vec2(uv.x*ratio,uv.y);return mix(getFromColor(uv),getToColor(uv),inHeart(p,vec2(.5*ratio,.42),progress));}'],
+    squares: ['สี่เหลี่ยมสุ่ม', RND + 'vec4 transition(vec2 uv){vec2 g=ratio<1.?vec2(10.,10./ratio):vec2(10.*ratio,10.);float r=rnd(floor(uv*g));return mix(getFromColor(uv),getToColor(uv),smoothstep(r-.08,r,progress*1.1));}'],
+    lightleak: ['แสงฟิล์ม', 'vec4 transition(vec2 uv){float s=sin(progress*3.14159);float g=smoothstep(0.,1.,1.-abs(uv.x+uv.y*.5-progress*2.2+.35));vec4 c=mix(getFromColor(uv),getToColor(uv),smoothstep(.35,.65,progress));return clamp(c+vec4(1.,.62,.28,0.)*g*s*.9,0.,1.);}'],
+    dots: ['จุดกลมเปิด', 'vec4 transition(vec2 uv){vec2 g=vec2(12.*ratio,12.);vec2 f=fract(uv*g)-.5;return mix(getFromColor(uv),getToColor(uv),step(length(f),progress*.75));}']
+  }
+  Object.keys(GLFX).forEach((k) => TRANS.push(['gl:' + k, GLFX[k][0]]))
+  let GLX = []; try { GLX = JSON.parse(localStorage.getItem('ve_glx') || '[]') } catch (e) { GLX = [] }
+  const GOOD = ['zoomblur', 'whip', 'fade', 'slide', 'gl:circleopen', 'gl:crosswarp', 'gl:dblur', 'gl:squares', 'gl:wind', 'gl:flash', 'gl:dreamy', 'gl:pixelize']
+  function transOpts(v, withRandom) {
+    const g = (lbl, L) => L.length ? '<optgroup label="' + lbl + '">' + L.map((x) => '<option value="' + esc(x[0]) + '"' + (x[0] === v ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') + '</optgroup>' : ''
+    return (withRandom ? '<option value="random"' + (v === 'random' ? ' selected' : '') + '>🎲 สุ่มหลายแบบ</option>' : '') +
+      g('พื้นฐาน', TRANS.filter((x) => !x[0].startsWith('gl:'))) + g('เอฟเฟกต์ GPU ในแอป', TRANS.filter((x) => x[0].startsWith('gl:'))) +
+      g('GL Transitions (โหลดจากเน็ต · ฟรี)', GLX.map((x) => ['gx:' + x.name, x.name + (x.author ? ' · ' + x.author : '')]))
+  }
+  const GL = (() => {
+    let cv = null, gl = null, buf = null, tA = null, tB = null, ok = null; const progs = {}
+    const VS = 'attribute vec2 pos;varying vec2 _uv;void main(){_uv=pos*.5+.5;gl_Position=vec4(pos,0.,1.);}'
+    const HEAD = 'precision highp float;varying vec2 _uv;uniform sampler2D from;uniform sampler2D to;uniform float progress;uniform float ratio;vec4 getFromColor(vec2 uv){return texture2D(from,uv);}vec4 getToColor(vec2 uv){return texture2D(to,uv);}\n'
+    function init() {
+      if (ok != null) return ok
+      cv = document.createElement('canvas'); gl = cv.getContext('webgl', { premultipliedAlpha: false, preserveDrawingBuffer: true }) || cv.getContext('experimental-webgl')
+      if (!gl) return (ok = false)
+      buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW)
+      const mk = () => { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]].forEach((x) => gl.texParameteri(gl.TEXTURE_2D, x[0], x[1])); return t }
+      tA = mk(); tB = mk(); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); return (ok = true)
+    }
+    function compile(key) {
+      if (progs[key] !== undefined) return progs[key]
+      let src = '', def = {}, types = {}
+      if (key.startsWith('gl:')) src = (GLFX[key.slice(3)] || [])[1]
+      else { const x = GLX.find((y) => 'gx:' + y.name === key); if (x) { src = x.glsl; def = x.defaultParams || {}; types = x.paramsTypes || {} } }
+      if (!src) return (progs[key] = null)
+      const sh = (t, c) => { const o = gl.createShader(t); gl.shaderSource(o, c); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { console.warn(key, gl.getShaderInfoLog(o)); return null } return o }
+      const v = sh(gl.VERTEX_SHADER, VS), f = sh(gl.FRAGMENT_SHADER, HEAD + src + '\nvoid main(){gl_FragColor=transition(_uv);}')
+      if (!v || !f) return (progs[key] = null)
+      const pr = gl.createProgram(); gl.attachShader(pr, v); gl.attachShader(pr, f); gl.linkProgram(pr)
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return (progs[key] = null)
+      gl.useProgram(pr)
+      Object.keys(def).forEach((k) => { const loc = gl.getUniformLocation(pr, k), t = types[k], d = def[k]; if (!loc) return
+        if (t === 'float') gl.uniform1f(loc, d); else if (t === 'int') gl.uniform1i(loc, d); else if (t === 'bool') gl.uniform1i(loc, d ? 1 : 0)
+        else if (t === 'vec2') gl.uniform2f(loc, d[0], d[1]); else if (t === 'vec3') gl.uniform3f(loc, d[0], d[1], d[2]); else if (t === 'vec4') gl.uniform4f(loc, d[0], d[1], d[2], d[3]); else if (t === 'ivec2') gl.uniform2i(loc, d[0], d[1]) })
+      return (progs[key] = { p: pr, loc: { pos: gl.getAttribLocation(pr, 'pos'), from: gl.getUniformLocation(pr, 'from'), to: gl.getUniformLocation(pr, 'to'), progress: gl.getUniformLocation(pr, 'progress'), ratio: gl.getUniformLocation(pr, 'ratio') } })
+    }
+    function draw(key, a, b, p, w, h) {
+      if (!init()) return null
+      const pr = compile(key); if (!pr) return null
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h }
+      gl.viewport(0, 0, w, h); gl.useProgram(pr.p)
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tA); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, a)
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tB); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, b)
+      gl.uniform1i(pr.loc.from, 0); gl.uniform1i(pr.loc.to, 1); gl.uniform1f(pr.loc.progress, p); gl.uniform1f(pr.loc.ratio, w / h)
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.enableVertexAttribArray(pr.loc.pos); gl.vertexAttribPointer(pr.loc.pos, 2, gl.FLOAT, false, 0, 0); gl.drawArrays(gl.TRIANGLES, 0, 6)
+      return cv
+    }
+    return { draw: draw, ok: () => init(), test: (k) => { init(); return !!(ok && compile(k)) } }
+  })()
+  const TDUR = { whip: 0.32, zoomblur: 0.45, tear: 0.6, fade: 0.5, black: 0.6, slide: 0.45, zoom: 0.5, wipe: 0.45, 'gl:flash': 0.5, 'gl:glitch': 0.45, 'gl:dblur': 0.45 }
+  const STYLES = [['clean', 'ขาวขอบดำ'], ['pop', 'เด้งทีละคำ'], ['green', 'กล่องเขียว'], ['card', 'การ์ดขาว'], ['box', 'กล่องดำโปร่ง'], ['yellow', 'กล่องเหลือง'], ['hook', 'หัวเรื่องใหญ่']]
+  const POS = [['', 'ตำแหน่งหลัก'], ['top', 'ด้านบน'], ['middle', 'กลางจอ'], ['lower', 'ค่อนล่าง'], ['bottom', 'ด้านล่าง']]
+  const FONTS = ['Kanit', 'Prompt', 'Noto Sans Thai', 'Sarabun', 'Mitr', 'Anuphan', 'IBM Plex Sans Thai', 'Bai Jamjuree', 'Chakra Petch', 'K2D', 'Athiti', 'Mali', 'Itim', 'Sriracha', 'Chonburi', 'Pattaya', 'Loma', 'Poppins', 'Anton']
+  const MUSICLIB = [['music_piano_soft', 'เปียโนนุ่ม ๆ', 'อบอุ่น เล่าเรื่อง'], ['music_piano_bright', 'เปียโนสดใส', 'สินค้าใหม่ รีวิว'], ['music_upbeat', 'สนุก จังหวะเร็ว', 'โปรโมชัน เปิดตะกร้า'], ['music_lofi_chill', 'โลไฟ ชิลล์', 'บรรยากาศ ร้าน ฟาร์ม']]
+  const SFXLIB = [['sfx_whoosh', 'วูบ (เปลี่ยนฉาก)'], ['sfx_swipe', 'ปัดเร็ว'], ['sfx_pop', 'ป๊อป (ข้อความเด้ง)'], ['sfx_ding', 'ติ๊ง'], ['sfx_sparkle', 'วิบวับ'], ['sfx_click', 'คลิก'], ['sfx_kaching', 'กริ๊ง ขายได้']]
+  function fillTransSelects() { $('#transall').innerHTML = '<option value="">— เลือก —</option>' + transOpts('', true); const bv = $('#btrans').value || 'random'; $('#btrans').innerHTML = transOpts(bv, true) }
+  fillTransSelects(); $('#filtall').innerHTML = '<option value="">— เลือก —</option>' + opt(FILTERS)
+ $('#bstyle').innerHTML = opt(STYLES, 'clean')
+  $('#bmusic').innerHTML = '<option value="">ไม่ใส่เพลง</option>' + MUSICLIB.map((m) => '<option value="' + m[0] + '"' + (m[0] === 'music_piano_bright' ? ' selected' : '') + '>' + m[1] + '</option>').join('')
+  $('#sfont').innerHTML = FONTS.map((f) => '<option>' + f + '</option>').join('')
+
+  /* ---------- สถานะ ---------- */
+  const cv = $('#cv'), ctx = cv.getContext('2d')
+  const base = document.createElement('canvas'), bctx = base.getContext('2d')
+  let W = 720, H = 1280
+  let POOL = [] // {id, kind, name, el, file, url, dur, thumb}
+  let CL = [] // {id, m, kind, name, el, file, dur, in, out, hold, filter, trans, kb, vol}
+  let SUBS = [] // {id, a, b, text, style, pos}
+  let SFXE = [] // {id, t, key}
+  const ST = { font: 'Kanit', pos: 'lower', size: 6, color: '#ffffff', hl: '#0b4f14', style: 'clean', anim: true }
+  let MUSIC = null, VOICE = null // {el, name, file, dur, rms?}
+  let seeking = false, T = 0, playing = false, cur = -1, imgT0 = 0, sel = -1, exporting = null
+  const SNAP = {}
+  const len = (c) => Math.max(0.1, c.out - c.in + (c.hold || 0))
+  const total = () => CL.reduce((a, c) => a + len(c), 0)
+  const startOf = (i) => { let s = 0; for (let k = 0; k < i; k++) s += len(CL[k]); return s }
+  function clipAt(t) { let s = 0; for (let i = 0; i < CL.length; i++) { const l = len(CL[i]); if (t < s + l || i === CL.length - 1) return { i: i, local: Math.min(Math.max(0, t - s), l), s: s }; s += l } return null }
+  function setSize(w, h) { W = w; H = h; cv.width = base.width = w; cv.height = base.height = h; Object.keys(SNAP).forEach((k) => delete SNAP[k]); renderAt(T) }
+  $('#aspect').onchange = (e) => { const [w, h] = e.target.value.split('x').map(Number); setSize(w, h) }
+
+  /* ---------- เสียง (Web Audio) ---------- */
+  let AC = null, master = null, dest = null, musicGain = null, clipBus = null, voiceGain = null, sfxGain = null
+  function audio() {
+    if (AC) return AC
+    AC = new (window.AudioContext || window.webkitAudioContext)()
+    master = AC.createGain(); master.connect(AC.destination); dest = AC.createMediaStreamDestination(); master.connect(dest)
+    clipBus = AC.createGain(); clipBus.connect(master); clipBus.gain.value = $('#cvol').value / 100
+    musicGain = AC.createGain(); musicGain.connect(master); musicGain.gain.value = $('#mvol').value / 100
+    voiceGain = AC.createGain(); voiceGain.connect(master); voiceGain.gain.value = $('#vvol').value / 100
+    sfxGain = AC.createGain(); sfxGain.connect(master); sfxGain.gain.value = 0.8
+    POOL.forEach(hook); if (MUSIC) hookEl(MUSIC.el, musicGain); if (VOICE) hookEl(VOICE.el, voiceGain)
+    return AC
+  }
+  function hook(m) { if (!AC || m.kind !== 'video' || m.el._g) return; const s = AC.createMediaElementSource(m.el), g = AC.createGain(); s.connect(g); g.connect(clipBus); m.el._g = g }
+  function hookEl(el, out) { if (!AC || el._s) return; el._s = AC.createMediaElementSource(el); el._s.connect(out) }
+  async function rmsOf(file) {
+    const ac = audio(), buf = await ac.decodeAudioData(await file.arrayBuffer())
+    const sr = buf.sampleRate, win = Math.round(sr * 0.05), n = Math.floor(buf.length / win), rms = new Float32Array(n)
+    const chs = []; for (let k = 0; k < buf.numberOfChannels; k++) chs.push(buf.getChannelData(k))
+    for (let i = 0; i < n; i++) { let s = 0; for (const ch of chs) for (let j = i * win; j < (i + 1) * win; j++) s += ch[j] * ch[j]; rms[i] = 20 * Math.log10(Math.sqrt(s / (win * chs.length)) + 1e-9) }
+    return { rms: rms, step: 0.05, dur: buf.duration }
+  }
+  // ช่วงที่มีเสียงพูด: เกณฑ์อัตโนมัติจากระดับเสียง (ต่ำกว่าเสียงพูดเฉลี่ยราว 20 dB)
+  function autoThr(r) { const a = Array.from(r.rms).filter((x) => x > -90).sort((p, q) => p - q); if (!a.length) return -40; const p90 = a[Math.floor(a.length * 0.9)], p10 = a[Math.floor(a.length * 0.1)]; return Math.max(p10 + 6, Math.min(p90 - 18, -30)) }
+  function voiced(r, thr, a, b, gap, padA, padB, minLen) {
+    const out = []; let s = -1
+    for (let i = 0; i < r.rms.length; i++) { const t = i * r.step; if (t < a || t > b) continue; const on = r.rms[i] > thr; if (on && s < 0) s = t; if (!on && s >= 0) { out.push([s, t]); s = -1 } }
+    if (s >= 0) out.push([s, b])
+    const m = []; for (const x of out) { const p = m[m.length - 1]; if (p && x[0] - p[1] < gap) p[1] = x[1]; else m.push(x.slice()) }
+    return m.map((x) => [Math.max(a, x[0] - padA), Math.min(b, x[1] + padB)]).filter((x) => x[1] - x[0] >= minLen)
+  }
+  const SFXBUF = {}
+  async function sfxBuf(key) { if (SFXBUF[key]) return SFXBUF[key]; const r = await fetch('audio/' + key + '.mp3'); if (!r.ok) throw new Error('ไม่พบเสียง ' + key); SFXBUF[key] = await audio().decodeAudioData(await r.arrayBuffer()); return SFXBUF[key] }
+  let LIVE = []
+  async function scheduleSfx(from) {
+    stopSfx(); const now = AC.currentTime
+    for (const e of SFXE) { if (e.t < from - 0.02) continue; try { const b = await sfxBuf(e.key); if (!playing) return; const s = AC.createBufferSource(); s.buffer = b; s.connect(sfxGain); s.start(now + Math.max(0, e.t - from)); LIVE.push(s) } catch (er) { /* ข้าม */ } }
+  }
+  function stopSfx() { LIVE.forEach((s) => { try { s.stop() } catch (e) { /* แล้ว */ } }); LIVE = [] }
+  async function previewSfx(key) { audio(); if (AC.state === 'suspended') await AC.resume(); try { const s = AC.createBufferSource(); s.buffer = await sfxBuf(key); s.connect(sfxGain); s.start() } catch (e) { toast(e.message, true) } }
+
+  /* ---------- ไฟล์ ---------- */
+  function loadMedia(f) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(f)
+      if (f.type.startsWith('image/')) { const i = new Image(); i.onload = () => res({ kind: 'image', el: i, dur: 3, url: url, file: f, thumb: url }); i.onerror = () => rej(new Error('เปิดรูปไม่ได้')); i.src = url; return }
+      const v = document.createElement('video'); v.preload = 'auto'; v.playsInline = true; v.src = url
+      v.onloadedmetadata = () => {
+        const go = () => { const tc = document.createElement('canvas'); v.currentTime = Math.min(0.5, v.duration / 2); v.onseeked = () => { v.onseeked = null; tc.width = 120; tc.height = Math.round(120 * v.videoHeight / v.videoWidth) || 160; try { tc.getContext('2d').drawImage(v, 0, 0, tc.width, tc.height) } catch (e) { /* */ } v.currentTime = 0; res({ kind: 'video', el: v, dur: v.duration, url: url, file: f, thumb: tc.toDataURL('image/jpeg', 0.7) }) } }
+        if (isFinite(v.duration)) go(); else { v.currentTime = 1e9; v.ontimeupdate = () => { v.ontimeupdate = null; go() } }
+      }
+      v.onerror = () => rej(new Error('เปิดวิดีโอ ' + f.name + ' ไม่ได้ (รูปแบบไฟล์ไม่รองรับ)'))
+    })
+  }
+  async function addPool(fs) {
+    const out = []
+    for (const f of fs) { try { const m = await loadMedia(f); const it = Object.assign({ id: uid(), name: f.name }, m); POOL.push(it); hook(it); out.push(it) } catch (er) { toast(er.message, true, 4000) } }
+    drawPool(); return out
+  }
+  function drawPool() {
+    $('#pool').innerHTML = POOL.map((m, i) => '<div class="it"><img alt="" src="' + m.thumb + '"><b>' + (i + 1) + '</b><button type="button" class="x" data-pdel="' + m.id + '" title="เอาออก">✕</button><small>' + (m.kind === 'video' ? '🎞️ ' + fmt(m.dur) : '🖼️ รูป') + ' · ' + esc(m.name) + '</small></div>').join('') || '<p class="note" style="grid-column:1/-1">ยังไม่มีภาพ/คลิป</p>'
+  }
+  $('#pool').onclick = (e) => { const d = e.target.closest('[data-pdel]'); if (!d) return; const m = POOL.find((x) => x.id === d.dataset.pdel); if (CL.some((c) => c.m === m)) return toast('ภาพนี้ยังใช้อยู่ในคลิป ลบในแท็บ คลิป ก่อน', true); POOL = POOL.filter((x) => x !== m); drawPool() }
+  $('#madd').onclick = () => $('#mfiles').click()
+  $('#mfiles').onchange = (e) => { const fs = [...e.target.files]; e.target.value = ''; addPool(fs) }
+  const clipOf = (m, a, b, extra) => Object.assign({ id: uid(), m: m, kind: m.kind, name: m.name, el: m.el, file: m.file, dur: m.dur, in: a, out: b, hold: 0, filter: 'none', trans: 'none', kb: true, vol: 1 }, extra || {})
+  $('#add').onclick = () => $('#files').click()
+  $('#files').onchange = async (e) => { const fs = [...e.target.files]; e.target.value = ''; const items = await addPool(fs); items.forEach((m) => CL.push(clipOf(m, 0, m.dur, { trans: CL.length ? 'fade' : 'none' }))); sel = CL.length - 1; drawAll(); seek(T) }
+  ;['dragover', 'drop'].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); if (ev === 'drop' && e.dataTransfer.files.length) addPool([...e.dataTransfer.files]) }))
+  // เสียงพากย์
+  async function setVoice(f) {
+    if (VOICE) VOICE.el.pause()
+    const el = new Audio(URL.createObjectURL(f)); el.preload = 'auto'
+    await new Promise((res, rej) => { el.onloadedmetadata = res; el.onerror = () => rej(new Error('เปิดไฟล์เสียงไม่ได้')) })
+    VOICE = { el: el, name: f.name, file: f, dur: el.duration }
+    if (AC) hookEl(el, voiceGain)
+    try { VOICE.rms = await rmsOf(f); VOICE.dur = VOICE.rms.dur; VOICE.thr = autoThr(VOICE.rms); VOICE.segs = voiced(VOICE.rms, VOICE.thr, 0, VOICE.dur, 0.22, 0.04, 0.08, 0.15) } catch (e) { toast('อ่านเสียงพากย์ไม่ได้: ' + e.message, true) }
+    const txt = '🎙️ ' + f.name + ' · ' + fmt(VOICE.dur) + (VOICE.segs ? ' · พบช่วงพูด ' + VOICE.segs.length + ' ช่วง' : '')
+    $('#vinfo').innerHTML = '<span class="ok">' + esc(txt) + '</span>'; $('#vinfo2').textContent = txt
+    drawWave(); return VOICE
+  }
+  $('#vadd').onclick = () => $('#vfile').click()
+  $('#vfile').onchange = async (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) { await setVoice(f); toast('นำเข้าเสียงพากย์แล้ว') } }
+
+  /* ---------- สร้างคลิปจากสคริปต์ ---------- */
+  function parseScript(txt) {
+    const out = []
+    txt.split('\n').map((l) => l.trim()).filter(Boolean).forEach((l) => {
+      if (/^#/.test(l)) { out.push({ type: 'title', text: l.replace(/^#+\s*/, '') }); return }
+      const m = /^\[([\d,\s+]+)\]\s*(.*)$/.exec(l)
+      out.push({ type: 'say', text: (m ? m[2] : l).trim(), media: m ? m[1].split(/[,+\s]+/).filter(Boolean).map((x) => +x - 1) : [] })
+    })
+    return out
+  }
+  const weight = (s) => Math.max(2, s.replace(/[\sัิ-ฺ็-๎]/g, '').length) // ไม่นับสระบน/ล่าง วรรณยุกต์
+  // จับคู่ประโยคกับช่วงพูดในเสียงพากย์: วางจุดตัดตรงช่วงหยุดหายใจที่ใกล้ตำแหน่งที่คาดไว้ที่สุด
+  function alignLines(lines, segs) {
+    const n = lines.length, w = lines.map((l) => weight(l.text)), sum = w.reduce((a, b) => a + b, 0)
+    const lens = segs.map((s) => s[1] - s[0]), tot = lens.reduce((a, b) => a + b, 0)
+    const tOf = (tau) => { for (let j = 0; j < segs.length; j++) { if (tau <= lens[j]) return segs[j][0] + tau; tau -= lens[j] } return segs[segs.length - 1][1] }
+    const gaps = segs.slice(1).map((s, j) => ({ a: segs[j][1], b: s[0], mid: (segs[j][1] + s[0]) / 2 }))
+    const cuts = []; let gi = 0, cum = 0
+    for (let k = 1; k < n; k++) {
+      cum += w[k - 1]; const t = tOf(tot * cum / sum), exp = tot * w[k - 1] / sum
+      let best = -1, bd = 1e9
+      for (let j = gi; j < gaps.length - Math.max(0, 0); j++) { const d = Math.abs(gaps[j].mid - t); if (d < bd) { bd = d; best = j } }
+      if (best >= 0 && bd <= Math.max(0.8, exp * 0.5)) { cuts.push({ a: gaps[best].a, b: gaps[best].b }); gi = best + 1 }
+      else { const p = cuts.length ? cuts[cuts.length - 1].b + 0.2 : segs[0][0] + 0.2; const x = Math.max(t, p); cuts.push({ a: x, b: x }) }
+    }
+    return lines.map((l, k) => ({ a: k ? cuts[k - 1].b : segs[0][0], b: k < n - 1 ? cuts[k].a : segs[segs.length - 1][1], cut: k < n - 1 ? (cuts[k].a + cuts[k].b) / 2 : null }))
+  }
+  let PACE = 3.5
+  $('#pace').onclick = (e) => { const b = e.target.closest('[data-v]'); if (!b) return; PACE = +b.dataset.v; $$('#pace button').forEach((x) => x.classList.toggle('on', x === b)) }
+  async function buildFromScript() {
+    const items = parseScript($('#script').value), says = items.filter((x) => x.type === 'say')
+    if (!says.length) return toast('ใส่สคริปต์ก่อน (1 บรรทัด = 1 ประโยค)', true)
+    if (!POOL.length) return toast('เพิ่มภาพ/คลิปในขั้นที่ 3 ก่อน', true)
+    stop()
+    let spans, endT
+    if (VOICE && VOICE.segs && VOICE.segs.length) { spans = alignLines(says, VOICE.segs); endT = Math.max(VOICE.dur, spans[spans.length - 1].b) + 0.6 }
+    else { let t = 0.3; spans = says.map((s) => { const d = Math.max(1.6, weight(s.text) / 11 + 0.5), x = { a: t, b: t + d - 0.15, cut: t + d }; t += d; return x }); spans[spans.length - 1].cut = null; endT = t + 0.6 }
+    const trans = $('#btrans').value, cvol = +$('#bclipvol').value, useOff = {}, shots = []
+    let next = 0
+    const take = (idx) => { const m = POOL[((idx % POOL.length) + POOL.length) % POOL.length]; return m }
+    const mkShot = (m, d, tr) => {
+      if (m.kind === 'image') return clipOf(m, 0, d, { dur: d, trans: tr, vol: cvol })
+      let off = useOff[m.id] || 0; if (off + Math.min(d, m.dur) > m.dur - 0.05) off = 0
+      const a = off, b = Math.min(m.dur, off + d), hold = Math.max(0, d - (b - a)); useOff[m.id] = b
+      return clipOf(m, a, b, { hold: hold, trans: tr, vol: cvol })
+    }
+    says.forEach((s, i) => {
+      const vs = i ? spans[i - 1].cut : 0, ve = spans[i].cut != null ? spans[i].cut : endT, d = Math.max(0.3, ve - vs)
+      let media = s.media.filter((x) => x >= 0 && x < POOL.length)
+      if (!media.length) { const k = PACE > 0 && d > PACE * 1.25 ? Math.ceil(d / PACE) : 1; media = []; for (let j = 0; j < k; j++) media.push(next++) } else next = media[media.length - 1] + 1
+      const part = d / media.length
+      media.forEach((mi, j) => shots.push(mkShot(take(mi), part, i === 0 && j === 0 ? 'none' : j === 0 ? pickT(trans, i) : (PACE && PACE < 2 ? 'none' : 'whip'))))
+    })
+    CL = shots
+    // ซับ + หัวเรื่อง
+    SUBS = []; let si = 0
+    items.forEach((it, k) => {
+      if (it.type === 'say') { const sp = spans[si]; SUBS.push({ id: uid(), a: r2(Math.max(0, sp.a - 0.05)), b: r2(sp.b + 0.12), text: it.text, style: '', pos: '' }); si++ }
+      else { const sp = spans[Math.min(si, spans.length - 1)]; SUBS.push({ id: uid(), a: r2(si ? sp.a - 0.05 : 0), b: r2(sp.cut != null ? sp.cut : endT - 0.3), text: it.text, style: 'hook', pos: 'top' }) }
+    })
+    ST.style = $('#bstyle').value; syncStyleUI()
+    // เสียงเอฟเฟกต์
+    SFXE = []
+    if ($('#bwhoosh').checked) { let t = 0; CL.forEach((c, i) => { if (i && c.trans !== 'none') SFXE.push({ id: uid(), t: r2(Math.max(0, t - 0.18)), key: c.trans === 'whip' ? 'sfx_swipe' : c.trans === 'gl:flash' || c.trans === 'gl:lightleak' ? 'sfx_sparkle' : c.trans === 'gl:glitch' ? 'sfx_click' : 'sfx_whoosh' }); t += len(c) }) }
+    if ($('#bding').checked) SUBS.filter((s) => s.style === 'hook').forEach((s) => SFXE.push({ id: uid(), t: r2(s.a), key: 'sfx_pop' }))
+    // เพลง
+    const mk = $('#bmusic').value; if (mk) await useLibMusic(mk, true)
+    Object.keys(SNAP).forEach((x) => delete SNAP[x]); sel = -1; T = 0
+    drawAll(); seek(0)
+    $('#bres').innerHTML = '<div class="res">✅ สร้างแล้ว: <b>' + says.length + '</b> ประโยค · <b>' + CL.length + '</b> ช็อต · ยาว <b>' + fmt(total()) + '</b>' + (VOICE ? ' · ซับตรงตามช่วงพูดในเสียงพากย์' : ' · ไม่มีเสียงพากย์ ใช้เวลาประมาณจากความยาวข้อความ') +
+      '<br>กด ▶ ดู แล้วแก้ต่อได้: เวลาซับในแท็บ 💬 · ตัด/สลับ/เปลี่ยนภาพในแท็บ 🎬 · ย้ายจุดตัดด้วย ✂️ แยกคลิปตรงนี้</div>'
+    toast('สร้างคลิปเบื้องต้นแล้ว กด ▶ ดูได้เลย')
+  }
+  $('#build').onclick = () => buildFromScript().catch((e) => toast('สร้างไม่สำเร็จ: ' + e.message, true, 4000))
+
+  /* ---------- รายการคลิป ---------- */
+  function drawAll() { drawClips(); drawSubsList(); drawSfx(); drawTracks() }
+  function drawTracks() {
+    const tt = Math.max(0.1, total())
+    $('#trkV').innerHTML = CL.map((c, i) => '<div class="' + (i === sel ? 'on' : '') + '" data-ci="' + i + '" style="flex:' + len(c) + '">' + (c.m ? POOL.indexOf(c.m) + 1 : '') + '</div>').join('') || '<div style="flex:1">ยังไม่มีคลิป</div>'
+    $('#trkS').innerHTML = '<label>ซับ</label>' + SUBS.map((s) => '<div data-sid="' + s.id + '" title="' + esc(s.text) + '" style="left:' + (s.a / tt * 100) + '%;width:' + Math.max(0.5, (s.b - s.a) / tt * 100) + '%;' + (s.style === 'hook' ? 'background:#f39c12' : '') + '"></div>').join('')
+    drawWave()
+  }
+  function drawWave() {
+    const c = $('#wave'), w = c.clientWidth || 600; c.width = w; const x = c.getContext('2d'); x.clearRect(0, 0, w, 22)
+    if (!VOICE || !VOICE.rms) return
+    const tt = Math.max(total(), VOICE.dur), r = VOICE.rms
+    x.fillStyle = 'rgba(76,208,125,.25)'; (VOICE.segs || []).forEach((s) => x.fillRect(s[0] / tt * w, 0, (s[1] - s[0]) / tt * w, 22))
+    x.fillStyle = '#4cd07d'
+    for (let px = 0; px < w; px++) { const i = Math.floor(px / w * tt / r.step); const v = r.rms[i]; if (v == null) continue; const h = Math.max(1, Math.min(22, (v + 60) / 60 * 22)); x.fillRect(px, 11 - h / 2, 1, h) }
+  }
+  $('#tracks').addEventListener('click', (e) => {
+    const s = e.target.closest('[data-sid]'); if (s) { const x = SUBS.find((y) => y.id === s.dataset.sid); if (x) { seek(x.a + 0.05); setTab('subs') } return }
+    const d = e.target.closest('[data-ci]'); if (d) { sel = +d.dataset.ci; seek(startOf(sel) + 0.01); drawClips(); drawTracks(); setTab('clips'); return }
+    const r = $('#tracks').getBoundingClientRect(); seek((e.clientX - r.left) / r.width * total())
+  })
+  function poolOpts(m) { return POOL.map((p, i) => '<option value="' + p.id + '"' + (p === m ? ' selected' : '') + '>' + (i + 1) + '. ' + esc(p.name) + '</option>').join('') }
+  function drawClips() {
+    $('#clips').innerHTML = CL.map((c, i) => '<div class="clip' + (i === sel ? ' on' : '') + '" data-ci="' + i + '"><div class="hd" data-open="' + i + '"><span class="n">' + (i + 1) + '</span><b>' + (c.kind === 'image' ? '🖼️ ' : '🎞️ ') + esc(c.name) + '</b><small>' + fmt(len(c)) + '</small></div><div class="bd">' +
+      '<label class="lbl" style="margin-top:6px">ภาพที่ใช้</label><select class="in" data-f="media">' + poolOpts(c.m) + '</select>' +
+      '<div class="g2" style="margin-top:6px">' + (c.kind === 'video' ? '<label>เริ่ม (วิ)<input class="in" type="number" step="0.1" min="0" data-f="in" value="' + r2(c.in) + '"></label><label>จบ (วิ)<input class="in" type="number" step="0.1" data-f="out" value="' + r2(c.out) + '"></label>' : '<label>แสดง (วิ)<input class="in" type="number" step="0.1" min="0.3" data-f="dur" value="' + r2(len(c)) + '"></label><label style="align-self:end"><input type="checkbox" data-f="kb"' + (c.kb ? ' checked' : '') + '> ซูมช้า ๆ</label>') + '</div>' +
+      (c.kind === 'video' && c.hold > 0.05 ? '<p class="note">⏸ คลิปสั้นกว่าประโยค ค้างภาพสุดท้าย ' + c.hold.toFixed(1) + ' วิ</p>' : '') +
+      (c.kind === 'video' ? '<div class="row"><button type="button" class="btn sm" data-a="setin">เริ่ม = ตรงที่เล่น</button><button type="button" class="btn sm" data-a="setout">จบ = ตรงที่เล่น</button><button type="button" class="btn sm s" data-a="auto">✂️ ตัดช่วงเงียบ</button></div>' : '') +
+      '<div class="g2"><label>เอฟเฟกต์สี<select class="in" data-f="filter">' + opt(FILTERS, c.filter) + '</select></label><label>เปลี่ยนฉากเข้า<select class="in" data-f="trans"' + (i ? '' : ' disabled') + '>' + transOpts(i ? c.trans : 'none') + '</select></label></div>' +
+      (i ? '<div class="row"><button type="button" class="btn sm s" data-a="tprev">▶ ดูรอยต่อ</button></div>' : '') +
+      (c.kind === 'video' ? '<label class="lbl">เสียงคลิป <b>' + Math.round(c.vol * 100) + '%</b></label><input type="range" min="0" max="150" data-f="vol" value="' + Math.round(c.vol * 100) + '">' : '') +
+      '<div class="row"><button type="button" class="btn sm" data-a="up"' + (i ? '' : ' disabled') + '>▲</button><button type="button" class="btn sm" data-a="down"' + (i < CL.length - 1 ? '' : ' disabled') + '>▼</button><button type="button" class="btn sm" data-a="dup">⧉ สำเนา</button><span style="flex:1"></span><button type="button" class="btn sm d" data-a="del">🗑 ลบ</button></div></div></div>').join('') +
+      (CL.length ? '<p class="note">ความยาวรวม ' + fmt(total()) + ' · แตะชื่อคลิปเพื่อแก้ · เปลี่ยนภาพที่ใช้ได้โดยไม่เสียเวลาที่ตั้งไว้</p>' : '<p class="note">สร้างจากสคริปต์ หรือเพิ่มวิดีโอ/รูปเพื่อเริ่ม</p>')
+    $('#seek').max = Math.max(1, Math.round(total() * 100)); updTime()
+  }
+  const reset = () => { Object.keys(SNAP).forEach((x) => delete SNAP[x]); drawClips(); drawTracks(); seek(Math.min(T, total())) }
+  $('#clips').addEventListener('click', async (e) => {
+    const card = e.target.closest('[data-ci]'); if (!card) return
+    const i = +card.dataset.ci, c = CL[i]
+    if (e.target.closest('[data-open]')) { sel = sel === i ? -1 : i; if (sel >= 0) seek(startOf(i) + 0.01); drawClips(); drawTracks(); return }
+    const a = e.target.closest('[data-a]'); if (!a) return
+    const k = clipAt(T), here = k && k.i === i ? c.in + Math.min(k.local, c.out - c.in) : null
+    if (a.dataset.a === 'setin') { if (here == null) return toast('เลื่อนตัวเล่นไปไว้ในคลิปนี้ก่อน', true); c.in = Math.min(here, c.out - 0.2) }
+    else if (a.dataset.a === 'setout') { if (here == null) return toast('เลื่อนตัวเล่นไปไว้ในคลิปนี้ก่อน', true); c.out = Math.max(here, c.in + 0.2); c.hold = 0 }
+    else if (a.dataset.a === 'up') { CL.splice(i - 1, 0, CL.splice(i, 1)[0]); sel = i - 1 }
+    else if (a.dataset.a === 'down') { CL.splice(i + 1, 0, CL.splice(i, 1)[0]); sel = i + 1 }
+    else if (a.dataset.a === 'dup') { CL.splice(i + 1, 0, Object.assign({}, c, { id: uid() })); sel = i + 1 }
+    else if (a.dataset.a === 'del') { CL.splice(i, 1); sel = -1 }
+    else if (a.dataset.a === 'auto') { await autoCut([i]); return }
+    else if (a.dataset.a === 'tprev') { previewJoin(i); return }
+    reset()
+  })
+  $('#clips').addEventListener('change', (e) => {
+    const card = e.target.closest('[data-ci]'), f = e.target.dataset.f; if (!card || !f) return
+    const c = CL[+card.dataset.ci], v = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    if (f === 'media') { const m = POOL.find((x) => x.id === v), d = len(c); Object.assign(c, { m: m, kind: m.kind, name: m.name, el: m.el, file: m.file, dur: m.dur }); if (m.kind === 'image') { c.in = 0; c.out = c.dur = d; c.hold = 0 } else { c.in = 0; c.out = Math.min(m.dur, d); c.hold = Math.max(0, d - c.out) } }
+    else if (f === 'in') c.in = Math.max(0, Math.min(+v, c.out - 0.2))
+    else if (f === 'out') { c.out = Math.min(c.dur, Math.max(+v, c.in + 0.2)); c.hold = 0 }
+    else if (f === 'dur') { c.in = 0; c.out = c.dur = Math.max(0.3, +v) }
+    else if (f === 'vol') c.vol = v / 100
+    else c[f] = v
+    reset()
+  })
+  $('#clips').addEventListener('input', (e) => { if (e.target.dataset.f === 'vol') { const c = CL[+e.target.closest('[data-ci]').dataset.ci]; c.vol = e.target.value / 100; e.target.previousElementSibling.querySelector('b').textContent = e.target.value + '%' } })
+  const pickT = (v, i) => (v === 'random' ? GOOD[(i * 7 + 3) % GOOD.length] : v)
+  function previewJoin(i) { stop(); Object.keys(SNAP).forEach((x) => delete SNAP[x]); seek(Math.max(0, startOf(i) - 0.9)); setTimeout(() => { play(); setTimeout(stop, 2000) }, 250) }
+  $('#transall').onchange = (e) => { if (!e.target.value) return; CL.forEach((c, i) => { if (i) c.trans = pickT(e.target.value, i) }); e.target.value = ''; reset(); toast('ใส่เปลี่ยนฉากทุกคลิปแล้ว') }
+  $('#filtall').onchange = (e) => { if (!e.target.value) return; CL.forEach((c) => { c.filter = e.target.value }); e.target.value = ''; reset(); toast('ใส่เอฟเฟกต์ทุกคลิปแล้ว') }
+  $('#split').onclick = () => {
+    const k = clipAt(T); if (!k) return
+    const c = CL[k.i]
+    if (k.local < 0.2 || len(c) - k.local < 0.2) return toast('ตำแหน่งชิดหัว/ท้ายคลิปเกินไป', true)
+    let b
+    if (c.kind === 'image') { b = Object.assign({}, c, { id: uid(), in: 0, out: len(c) - k.local, dur: len(c) - k.local, trans: 'none' }); c.out = c.dur = k.local; c.hold = 0 }
+    else if (k.local <= c.out - c.in) { const at = c.in + k.local; b = Object.assign({}, c, { id: uid(), in: at, trans: 'none' }); c.out = at; c.hold = 0 }
+    else { const h = k.local - (c.out - c.in); b = Object.assign({}, c, { id: uid(), in: c.out - 0.05, out: c.out, hold: c.hold - h, trans: 'none' }); c.hold = h }
+    CL.splice(k.i + 1, 0, b); sel = k.i + 1; reset(); toast('แยกคลิปแล้ว เปลี่ยนภาพของช่วงใหม่ได้ในแท็บ คลิป')
+  }
+
+  /* ---------- โหลด GL Transitions (ชุดเปิดฟรี) ---------- */
+  function glxInfo() { $('#glxinfo').textContent = 'มีเอฟเฟกต์เปลี่ยนฉาก ' + (TRANS.length - 1 + GLX.length) + ' แบบ (ในแอป ' + (TRANS.length - 1) + (GLX.length ? ' + GL Transitions ' + GLX.length : '') + ')' + (GLX.length ? ' · ชุดที่โหลดเก็บไว้ในเครื่องแล้ว' : '') }
+  $('#glxload').onclick = async () => {
+    busy('กำลังโหลดเอฟเฟกต์จาก GL Transitions…', 0.4)
+    try {
+      let j = null
+      for (const u of ['https://unpkg.com/gl-transitions@1/gl-transitions.json', 'https://cdn.jsdelivr.net/npm/gl-transitions@1/gl-transitions.json']) { try { const r = await fetch(u); if (r.ok) { j = await r.json(); break } } catch (e) { /* ลองที่ถัดไป */ } }
+      if (!Array.isArray(j)) throw new Error('ต่อเน็ตไม่ได้ หรือเว็บถูกบล็อก')
+      const bad = /sampler2D/
+      GLX = j.filter((x) => x.glsl && !bad.test(Object.values(x.paramsTypes || {}).join(' ')) && !/uniform\s+sampler2D/.test(x.glsl)).map((x) => ({ name: x.name, author: x.author || '', license: x.license || 'MIT', glsl: x.glsl, defaultParams: x.defaultParams || {}, paramsTypes: x.paramsTypes || {} }))
+      // ทดสอบคอมไพล์ ตัดตัวที่ใช้ไม่ได้ในเครื่องนี้ออก
+      GLX = GLX.filter((x) => GL.test('gx:' + x.name))
+      try { localStorage.setItem('ve_glx', JSON.stringify(GLX)) } catch (e) { /* เก็บไม่ได้ก็ใช้รอบนี้ */ }
+      fillTransSelects(); drawClips(); glxInfo(); busy(null); toast('เพิ่มเอฟเฟกต์ ' + GLX.length + ' แบบแล้ว (เลือกได้ในช่อง เปลี่ยนฉาก)', false, 4000)
+    } catch (e) { busy(null); toast('โหลดไม่สำเร็จ: ' + e.message, true, 4000) }
+  }
+  glxInfo()
+
+  /* ---------- ตัดช่วงเงียบในคลิปที่มีคนพูด ---------- */
+  $('#thr').oninput = (e) => { $('#v-thr').textContent = e.target.value + ' dB' }
+  async function autoCut(list) {
+    const thr = +$('#thr').value; let cut = 0, made = 0
+    busy('กำลังฟังเสียงในคลิป…', 0)
+    try {
+      for (let n = list.length - 1; n >= 0; n--) {
+        const i = list[n], c = CL[i]; if (c.kind !== 'video') continue
+        let r; try { r = c.m._rms || (c.m._rms = await rmsOf(c.file)) } catch (e) { toast('คลิป ' + c.name + ' ไม่มีเสียง หรืออ่านเสียงไม่ได้', true); continue }
+        const seg = voiced(r, thr, c.in, c.out, 0.35, 0.12, 0.15, 0.3)
+        if (!seg.length) { toast('คลิป ' + (i + 1) + ': ไม่พบเสียงพูด ลองลดระดับ "เงียบ"', true, 3500); continue }
+        const before = len(c), parts = seg.map((s, k) => Object.assign({}, c, { id: uid(), in: s[0], out: s[1], hold: 0, trans: k ? 'none' : c.trans }))
+        CL.splice(i, 1, ...parts); cut += before - parts.reduce((a, p) => a + len(p), 0); made += parts.length
+      }
+    } finally { busy(null) }
+    sel = -1; reset(); seek(0)
+    if (made) toast('ตัดช่วงเงียบออก ' + cut.toFixed(1) + ' วินาที · เหลือ ' + made + ' ช่วง', false, 3500)
+  }
+  $('#autoall').onclick = () => { const L = CL.map((c, i) => (c.kind === 'video' ? i : -1)).filter((i) => i >= 0); if (!L.length) return toast('ยังไม่มีคลิปวิดีโอ', true); autoCut(L) }
+
+  /* ---------- วาดภาพ ---------- */
+  function drawSource(c, el, local, x) {
+    const iw = el.videoWidth || el.naturalWidth || el.width, ih = el.videoHeight || el.naturalHeight || el.height; if (!iw || !ih) return
+    let zoom = 1; if (c.kind === 'image' && c.kb) zoom = 1 + 0.1 * (local / len(c))
+    else if (c.kind === 'video' && c.hold && local > c.out - c.in) zoom = 1 + 0.06 * (local - (c.out - c.in)) / c.hold
+    const mode = $('#fitmode').value
+    x.save(); x.filter = FCSS[c.filter] || 'none'
+    if (mode === 'blur') { const s = Math.max(W / iw, H / ih) * 1.1; x.save(); x.filter = (FCSS[c.filter] === 'none' ? '' : FCSS[c.filter] + ' ') + 'blur(28px) brightness(.75)'; x.drawImage(el, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s); x.restore() }
+    else if (mode === 'contain') { x.fillStyle = '#000'; x.fillRect(0, 0, W, H) }
+    const s = (mode === 'cover' ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih)) * zoom
+    x.drawImage(el, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s); x.restore()
+  }
+  // ตัดคำไทยเป็นก้อนสั้น ๆ สำหรับซับแบบเด้งทีละคำ
+  const SEG = window.Intl && Intl.Segmenter ? new Intl.Segmenter('th', { granularity: 'word' }) : null
+  function chunks(s) {
+    if (s._ck && s._ckT === s.text + s.a + s.b) return s._ck
+    let words = SEG ? Array.from(SEG.segment(s.text)).map((x) => x.segment) : s.text.split(/(\s+)/)
+    const out = []; let cur = ''
+    words.forEach((w) => { if (/^\s+$/.test(w)) { if (cur) { out.push(cur); cur = '' } return } if ((cur + w).replace(/\s/g, '').length > 9 && cur) { out.push(cur); cur = w } else cur += w })
+    if (cur) out.push(cur)
+    const ws = out.map((x) => weight(x)), sum = ws.reduce((a, b) => a + b, 0) || 1, d = s.b - s.a; let t = s.a
+    s._ck = out.map((x, i) => { const r = { a: t, b: t + d * ws[i] / sum, text: x }; t = r.b; return r }); s._ckT = s.text + s.a + s.b
+    return s._ck
+  }
+  function wrap(text, maxW) {
+    const words = SEG ? Array.from(SEG.segment(text)).map((x) => x.segment) : text.split(/(\s+)/), lines = []; let line = ''
+    for (const w of words) { const test = line + w; if (ctx.measureText(test).width > maxW && line.trim()) { lines.push(line.trim()); line = w.trimStart() } else line = test }
+    if (line.trim()) lines.push(line.trim()); return lines
+  }
+  function drawCaption(s, t) {
+    const style = s.style || ST.style, posK = s.pos || (style === 'hook' ? 'top' : ST.pos)
+    let text = s.text, a0 = s.a
+    if (style === 'pop') { const ck = chunks(s).find((c) => t >= c.a && t < c.b) || chunks(s)[chunks(s).length - 1]; if (!ck) return; text = ck.text; a0 = ck.a }
+    if (!text.trim()) return
+    const mul = style === 'hook' ? 1.55 : style === 'pop' ? 1.6 : 1
+    const fs = Math.round(Math.min(W, H) * ST.size / 100 * mul), maxW = W * (style === 'hook' ? 0.9 : 0.84)
+    const font = style === 'hook' || style === 'pop' ? (ST.font === 'Sarabun' ? 'Kanit' : ST.font) : ST.font
+    ctx.save(); ctx.font = (style === 'clean' || style === 'box' ? '700 ' : '800 ') + fs + 'px "' + font + '", "Loma", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+    const lines = wrap(text, maxW), lh = fs * 1.32, hgt = lines.length * lh
+    const cy = posK === 'top' ? H * 0.16 + hgt / 2 : posK === 'middle' ? H / 2 : posK === 'lower' ? H * 0.72 : H * 0.85 - hgt / 2
+    let sc = 1; const p = t - a0
+    if (ST.anim && p < 0.22) sc = p < 0.13 ? 0.6 + 0.52 * p / 0.13 : 1.12 - 0.12 * (p - 0.13) / 0.09
+    ctx.translate(W / 2, cy); ctx.scale(sc, sc)
+    lines.forEach((l, i) => {
+      const y = -hgt / 2 + lh * (i + 0.5), w = ctx.measureText(l).width, pad = fs * 0.38
+      const box = (fill, r) => { ctx.fillStyle = fill; ctx.beginPath(); ctx.roundRect(-w / 2 - pad, y - lh / 2 + 3, w + pad * 2, lh - 6, r); ctx.fill() }
+      ctx.lineJoin = 'round'
+      if (style === 'clean') { ctx.lineWidth = fs * 0.2; ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.strokeText(l, 0, y); ctx.fillStyle = ST.color }
+      else if (style === 'box') { box('rgba(0,0,0,.62)', fs * 0.22); ctx.fillStyle = ST.color }
+      else if (style === 'green') { box(ST.hl, fs * 0.25); ctx.fillStyle = '#ffffff' }
+      else if (style === 'card') { ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = fs * 0.4; ctx.shadowOffsetY = fs * 0.08; box('#ffffff', lh / 2); ctx.shadowColor = 'transparent'; ctx.fillStyle = ST.hl }
+      else if (style === 'yellow') { box('#f5d000', fs * 0.2); ctx.fillStyle = '#111' }
+      else if (style === 'pop') { ctx.lineWidth = fs * 0.26; ctx.strokeStyle = '#ffffff'; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = fs * 0.3; ctx.strokeText(l, 0, y); ctx.shadowColor = 'transparent'; ctx.fillStyle = ST.hl }
+      else if (style === 'hook') { ctx.lineWidth = fs * 0.22; ctx.strokeStyle = '#000'; ctx.strokeText(l, 0, y); ctx.fillStyle = '#ffffff' }
+      ctx.fillText(l, 0, y)
+    })
+    ctx.restore()
+  }
+  let TEAR = null
+  const tearLine = () => { if (TEAR && TEAR.w === W) return TEAR.p; const p = []; for (let x = 0; x <= W; x += W / 24) p.push([x, (Math.random() - 0.5) * H * 0.05]); TEAR = { w: W, p: p }; return p }
+  function compose(t) {
+    const k = clipAt(t)
+    bctx.fillStyle = '#000'; bctx.fillRect(0, 0, W, H)
+    if (k) {
+      const c = CL[k.i]; drawSource(c, c.el, k.local, bctx)
+      const td = TDUR[c.trans] || (c.trans.startsWith('g') ? 0.7 : 0.5), p = k.local / td, snap = SNAP[k.i]
+      if (k.i > 0 && c.trans !== 'none' && p < 1 && snap) {
+        const cur = document.createElement('canvas'); cur.width = W; cur.height = H; cur.getContext('2d').drawImage(base, 0, 0)
+        const e = p * p * (3 - 2 * p)
+        bctx.fillStyle = '#000'; bctx.fillRect(0, 0, W, H)
+        if (c.trans === 'fade') { bctx.drawImage(snap, 0, 0); bctx.globalAlpha = e; bctx.drawImage(cur, 0, 0); bctx.globalAlpha = 1 }
+        else if (c.trans === 'black') { if (e < 0.5) { bctx.globalAlpha = 1 - e * 2; bctx.drawImage(snap, 0, 0) } else { bctx.globalAlpha = e * 2 - 1; bctx.drawImage(cur, 0, 0) } bctx.globalAlpha = 1 }
+        else if (c.trans === 'slide') { bctx.drawImage(snap, -W * e, 0); bctx.drawImage(cur, W * (1 - e), 0) }
+        else if (c.trans === 'zoom') { bctx.drawImage(snap, 0, 0); const s = 0.6 + 0.4 * e; bctx.globalAlpha = e; bctx.drawImage(cur, W * (1 - s) / 2, H * (1 - s) / 2, W * s, H * s); bctx.globalAlpha = 1 }
+        else if (c.trans === 'wipe') { bctx.drawImage(snap, 0, 0); bctx.save(); bctx.beginPath(); bctx.rect(0, 0, W * e, H); bctx.clip(); bctx.drawImage(cur, 0, 0); bctx.restore() }
+        else if (c.trans === 'zoomblur') {
+          const src = p < 0.5 ? snap : cur, q = p < 0.5 ? p * 2 : (1 - p) * 2, s = 1 + 0.35 * q
+          bctx.save(); bctx.filter = 'blur(' + Math.round(q * 14) + 'px)'; bctx.drawImage(src, W * (1 - s) / 2, H * (1 - s) / 2, W * s, H * s); bctx.restore()
+        }
+        else if (c.trans === 'whip') { const dx = W * e; bctx.save(); bctx.filter = 'blur(' + Math.round(Math.sin(Math.PI * p) * 18) + 'px)'; bctx.drawImage(snap, -dx, 0); bctx.drawImage(cur, W - dx, 0); bctx.restore() }
+        else if (c.trans.startsWith('gl:') || c.trans.startsWith('gx:')) {
+          const out = GL.draw(c.trans, snap, cur, p, W, H)
+          if (out) bctx.drawImage(out, 0, 0); else { bctx.drawImage(snap, 0, 0); bctx.globalAlpha = e; bctx.drawImage(cur, 0, 0); bctx.globalAlpha = 1 }
+        }
+        else if (c.trans === 'tear') {
+          bctx.drawImage(cur, 0, 0); const pts = tearLine(), off = e * H * 0.6, mid = H / 2
+          const half = (top) => { bctx.save(); bctx.beginPath(); if (top) { bctx.moveTo(0, -1); bctx.lineTo(W, -1) } else { bctx.moveTo(0, H + 1); bctx.lineTo(W, H + 1) } for (let i = pts.length - 1; i >= 0; i--) bctx.lineTo(pts[i][0], mid + pts[i][1]); bctx.closePath(); bctx.translate(0, top ? -off : off); bctx.clip(); bctx.drawImage(snap, 0, 0)
+            bctx.strokeStyle = '#f4f1ea'; bctx.lineWidth = H * 0.012; bctx.beginPath(); pts.forEach((q, i) => { i ? bctx.lineTo(q[0], mid + q[1]) : bctx.moveTo(q[0], mid + q[1]) }); bctx.stroke(); bctx.restore() }
+          half(true); half(false)
+        }
+      }
+    }
+    ctx.drawImage(base, 0, 0)
+    const tt = total()
+    if ($('#fadein').checked && t < 0.4) { ctx.fillStyle = 'rgba(0,0,0,' + (1 - t / 0.4) + ')'; ctx.fillRect(0, 0, W, H) }
+    if ($('#fadeout').checked && tt > 1 && t > tt - 0.8) { ctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, (t - (tt - 0.8)) / 0.8) + ')'; ctx.fillRect(0, 0, W, H) }
+    SUBS.filter((s) => t >= s.a && t < s.b).sort((a, b) => (a.style === 'hook') - (b.style === 'hook')).forEach((s) => drawCaption(s, t))
+    if (!CL.length) { ctx.fillStyle = '#0d1f15'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#9fd8b4'; ctx.font = '700 ' + Math.round(W * 0.05) + 'px Kanit, Loma, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('📝 เริ่มที่แท็บ สคริปต์', W / 2, H / 2) }
+  }
+  function renderAt(t) { compose(t); updTime() }
+  function updTime() {
+    const tt = total(); $('#tm').textContent = fmt(T) + ' / ' + fmt(tt); if (!seeking) $('#seek').value = Math.round(T * 100)
+    $('#ph').style.left = (tt ? T / tt * 100 : 0) + '%'
+    $$('#subs .sub').forEach((r) => { const s = SUBS.find((x) => x.id === r.dataset.id); r.classList.toggle('on', !!s && T >= s.a && T < s.b) })
+  }
+
+  /* ---------- เล่น / เลื่อน ---------- */
+  function pauseAll(except) { POOL.forEach((m) => { if (m.kind === 'video' && m.el !== except && !m.el.paused) m.el.pause() }) }
+  function activate(i, local) {
+    cur = i; const c = CL[i]; pauseAll(c.el); c._hs = 0
+    if (c.kind === 'video') {
+      if (c.el._g) c.el._g.gain.value = c.vol
+      const span = c.out - c.in
+      if (local >= span - 0.03 && c.hold) { c.el.currentTime = Math.max(c.in, c.out - 0.05); c._hs = performance.now() - (local - span) * 1000 }
+      else { c.el.currentTime = c.in + local; const p = c.el.play(); if (p) p.catch(() => {}) }
+    } else imgT0 = performance.now() - local * 1000
+  }
+  function syncTracks(t) {
+    if (VOICE) { if (t < VOICE.dur) { VOICE.el.currentTime = t; VOICE.el.play().catch(() => {}) } else VOICE.el.pause() }
+    if (MUSIC) { MUSIC.el.currentTime = t % (MUSIC.el.duration || 1e9); MUSIC.el.play().catch(() => {}) }
+    scheduleSfx(t)
+  }
+  async function play() {
+    if (!CL.length) return; audio(); if (AC.state === 'suspended') await AC.resume()
+    if (T >= total() - 0.05) T = 0
+    const k = clipAt(T); playing = true; $('#play').textContent = '⏸'; activate(k.i, k.local); syncTracks(T)
+    loop()
+  }
+  function stop() { playing = false; $('#play').textContent = '▶'; pauseAll(null); if (MUSIC) MUSIC.el.pause(); if (VOICE) VOICE.el.pause(); stopSfx() }
+  function loop() {
+    if (!playing) return
+    const c = CL[cur], s = startOf(cur), l = len(c), span = c.out - c.in
+    let local
+    if (c.kind === 'video') {
+      if (c._hs) local = span + (performance.now() - c._hs) / 1000
+      else { local = c.el.currentTime - c.in; if (c.hold && (local >= span - 0.04 || c.el.ended)) { c.el.pause(); c._hs = performance.now() - Math.max(0, local - span) * 1000; local = Math.max(local, span) } }
+    } else local = (performance.now() - imgT0) / 1000
+    if (local < 0) local = 0
+    if (local >= l - 0.03 || (c.kind === 'video' && !c.hold && c.el.ended)) {
+      const sn = document.createElement('canvas'); sn.width = W; sn.height = H; sn.getContext('2d').drawImage(base, 0, 0); SNAP[cur + 1] = sn
+      if (cur + 1 < CL.length) { T = s + l; activate(cur + 1, 0) } else { T = total(); compose(T); updTime(); stop(); if (exporting) exporting.done(); return }
+      local = 0
+    }
+    T = startOf(cur) + Math.min(local, len(CL[cur]))
+    if (MUSIC && musicGain) {
+      let v = $('#mvol').value / 100; const tt = total()
+      if ($('#mfade').checked && tt - T < 2) v *= Math.max(0, (tt - T) / 2)
+      if ($('#mduck').checked) {
+        let talk = false
+        if (VOICE && VOICE.rms) { const i = Math.floor(T / VOICE.rms.step); talk = VOICE.rms.rms[i] > VOICE.thr }
+        const cc = CL[cur]; if (!talk && cc.kind === 'video' && cc.vol > 0.1 && cc.m && cc.m._rms) { const i = Math.floor(cc.el.currentTime / cc.m._rms.step); talk = cc.m._rms.rms[i] > +$('#thr').value }
+        if (talk) v *= 0.3
+      }
+      musicGain.gain.setTargetAtTime(v, AC.currentTime, 0.1)
+      if (MUSIC.el.ended) { MUSIC.el.currentTime = 0; MUSIC.el.play().catch(() => {}) }
+    }
+    compose(T); updTime(); if (exporting) exporting.tick(T)
+    requestAnimationFrame(loop)
+  }
+  let seekTok = 0
+  function seek(t) {
+    T = Math.max(0, Math.min(t, total())); const k = clipAt(T)
+    if (playing) { activate(k.i, k.local); syncTracks(T); return }
+    if (!k) { renderAt(0); return }
+    const c = CL[k.i]
+    if (c.kind === 'video') { const want = c.in + Math.min(k.local, c.out - c.in - 0.03), tok = ++seekTok; if (Math.abs(c.el.currentTime - want) > 0.04) { c.el.currentTime = want; c.el.onseeked = () => { if (tok === seekTok) renderAt(T) } } else renderAt(T) }
+    else renderAt(T)
+  }
+  $('#seek').addEventListener('input', (e) => { seeking = true; seek(e.target.value / 100) })
+  $('#seek').addEventListener('change', () => { seeking = false })
+  $('#play').onclick = () => (playing ? stop() : play())
+  document.addEventListener('keydown', (e) => { if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); $('#play').click() } })
+  $('#fitmode').onchange = () => renderAt(T)
+
+  /* ---------- ซับ ---------- */
+  function syncStyleUI() { $$('#stylechips button').forEach((b) => b.classList.toggle('on', b.dataset.v === ST.style)) }
+  $('#stylechips').innerHTML = STYLES.map((s) => '<button type="button" data-v="' + s[0] + '">' + s[1] + '</button>').join('')
+  $('#stylechips').onclick = (e) => { const b = e.target.closest('[data-v]'); if (!b) return; ST.style = b.dataset.v; syncStyleUI(); renderAt(T) }
+  syncStyleUI()
+  function drawSubsList() {
+    SUBS.sort((a, b) => a.a - b.a)
+    $('#subs').innerHTML = SUBS.map((s) => '<div class="sub" data-id="' + s.id + '"><div class="r1"><input type="number" step="0.05" min="0" data-k="a" value="' + r2(s.a) + '"><input type="number" step="0.05" min="0" data-k="b" value="' + r2(s.b) + '"><input data-k="text" value="' + esc(s.text) + '" placeholder="พิมพ์ซับ"><button type="button" class="x" data-del="' + s.id + '" title="ลบ">✕</button></div>' +
+      '<div class="r2"><select data-k="style"><option value="">สไตล์หลัก</option>' + opt(STYLES, s.style) + '</select><select data-k="pos">' + opt(POS, s.pos) + '</select></div></div>').join('') || '<p class="note">ยังไม่มีซับ</p>'
+  }
+  function addSub(a, b, text, style, pos) { const s = { id: uid(), a: r2(a), b: r2(b), text: text || '', style: style || '', pos: pos || '' }; SUBS.push(s); drawSubsList(); drawTracks(); return s }
+  $('#subadd').onclick = () => { if (!CL.length) return toast('สร้างคลิปก่อน', true); const s = addSub(T, Math.min(T + 2.5, total()), ''); setTab('subs'); const r = $('#subs [data-id="' + s.id + '"] [data-k=text]'); if (r) r.focus() }
+  $('#titleadd').onclick = () => { if (!CL.length) return toast('สร้างคลิปก่อน', true); const s = addSub(T, Math.min(T + 2.5, total()), 'หัวเรื่อง', 'hook', 'top'); setTab('subs'); const r = $('#subs [data-id="' + s.id + '"] [data-k=text]'); if (r) { r.focus(); r.select() } renderAt(T) }
+  $('#subhere').onclick = () => $('#subadd').click()
+  $('#subs').addEventListener('input', (e) => { const r = e.target.closest('[data-id]'), k = e.target.dataset.k; if (!r || !k) return; const s = SUBS.find((x) => x.id === r.dataset.id); s[k] = k === 'a' || k === 'b' ? Math.max(0, +e.target.value) : e.target.value; renderAt(T); if (k !== 'text') drawTracks() })
+  $('#subs').addEventListener('focusin', (e) => { const r = e.target.closest('[data-id]'); if (!r || playing) return; const s = SUBS.find((x) => x.id === r.dataset.id); if (s && (T < s.a || T >= s.b)) seek(s.a + 0.05) })
+  $('#subs').addEventListener('click', (e) => { const d = e.target.closest('[data-del]'); if (d) { SUBS = SUBS.filter((s) => s.id !== d.dataset.del); drawSubsList(); drawTracks(); renderAt(T) } })
+  $('#subs').addEventListener('change', (e) => { if (e.target.dataset.k === 'a' || e.target.dataset.k === 'b') drawSubsList() })
+  const srtTime = (t) => { const ms = Math.round(t * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60; return [h, m, s].map((x) => String(x).padStart(2, '0')).join(':') + ',' + String(ms % 1000).padStart(3, '0') }
+  $('#srtout').onclick = () => { const txt = SUBS.filter((s) => s.style !== 'hook').map((s, i) => (i + 1) + '\n' + srtTime(s.a) + ' --> ' + srtTime(s.b) + '\n' + s.text + '\n').join('\n'); download(new Blob([txt], { type: 'text/plain' }), ($('#oname').value || 'subtitle') + '.srt') }
+  $('#srtin').onclick = () => $('#srtfile').click()
+  $('#srtfile').onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return
+    const tt = (x) => { const m = /(\d+):(\d+):(\d+)[,.](\d+)/.exec(x); return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] + +m[4] / 1000 : 0 }
+    const blocks = (await f.text()).replace(/\r/g, '').split(/\n\s*\n/); let n = 0
+    blocks.forEach((b) => { const m = /(\d+:\d+:\d+[,.]\d+)\s*-->\s*(\d+:\d+:\d+[,.]\d+)\n([\s\S]*)/.exec(b); if (m) { SUBS.push({ id: uid(), a: tt(m[1]), b: tt(m[2]), text: m[3].trim().replace(/\n/g, ' '), style: '', pos: '' }); n++ } })
+    drawSubsList(); drawTracks(); renderAt(T); toast('นำเข้าซับ ' + n + ' บรรทัด')
+  }
+  const subUI = () => { ST.font = $('#sfont').value; ST.pos = $('#spos').value; ST.size = +$('#ssz').value; ST.color = $('#scol').value; ST.hl = $('#shl').value; ST.anim = $('#sanim').checked; $('#v-ssz').textContent = ST.size; document.fonts.load('800 40px "' + ST.font + '"', 'กA').then(() => renderAt(T), () => {}); renderAt(T) }
+  ;['sfont', 'spos', 'ssz', 'scol', 'shl', 'sanim'].forEach((id) => { $('#' + id).addEventListener('input', subUI) })
+  $('#spos').value = ST.pos
+
+  /* ---------- เพลง / เสียงพากย์ / เอฟเฟกต์ ---------- */
+  function drawLib() {
+    $('#mlib').innerHTML = MUSICLIB.map((m) => '<div class="li' + (MUSIC && MUSIC.key === m[0] ? ' on' : '') + '"><button type="button" class="btn sm" data-mprev="' + m[0] + '">▶</button><span>' + m[1] + '<br><small>' + m[2] + '</small></span><button type="button" class="btn sm s" data-muse="' + m[0] + '">' + (MUSIC && MUSIC.key === m[0] ? '✓ ใช้อยู่' : 'ใช้เพลงนี้') + '</button></div>').join('')
+    $('#slib').innerHTML = SFXLIB.map((s) => '<div class="li"><button type="button" class="btn sm" data-sprev="' + s[0] + '">▶</button><span>' + s[1] + '</span><button type="button" class="btn sm s" data-sadd="' + s[0] + '">➕ ตรงนี้</button></div>').join('')
+  }
+  function drawSfx() {
+    SFXE.sort((a, b) => a.t - b.t)
+    $('#sfxlist').innerHTML = SFXE.length ? '<div class="note" style="font-weight:700">เสียงเอฟเฟกต์ในคลิป (' + SFXE.length + ')</div>' + SFXE.map((e) => '<div class="row" style="margin:3px 0" data-eid="' + e.id + '"><input class="in" type="number" step="0.05" min="0" data-et value="' + r2(e.t) + '" style="width:80px"><span style="flex:1">' + ((SFXLIB.find((s) => s[0] === e.key) || [0, e.key])[1]) + '</span><button type="button" class="btn sm d" data-edel="' + e.id + '">ลบ</button></div>').join('') : ''
+  }
+  let prevAudio = null
+  $('#p-sound').addEventListener('click', async (e) => {
+    const t = e.target.closest('button'); if (!t) return
+    if (t.dataset.mprev) { if (prevAudio) { prevAudio.pause(); if (prevAudio._k === t.dataset.mprev) { prevAudio = null; return } } prevAudio = new Audio('audio/' + t.dataset.mprev + '.mp3'); prevAudio._k = t.dataset.mprev; prevAudio.volume = 0.6; prevAudio.play().catch(() => toast('เล่นไม่ได้', true)); return }
+    if (t.dataset.muse) { if (prevAudio) { prevAudio.pause(); prevAudio = null } await useLibMusic(t.dataset.muse); return }
+    if (t.dataset.sprev) { previewSfx(t.dataset.sprev); return }
+    if (t.dataset.sadd) { SFXE.push({ id: uid(), t: r2(T), key: t.dataset.sadd }); drawSfx(); toast('ใส่เสียงที่ ' + fmt(T)); return }
+    if (t.dataset.edel) { SFXE = SFXE.filter((x) => x.id !== t.dataset.edel); drawSfx() }
+  })
+  $('#sfxlist').addEventListener('change', (e) => { const r = e.target.closest('[data-eid]'); if (r && e.target.hasAttribute('data-et')) { const x = SFXE.find((y) => y.id === r.dataset.eid); x.t = Math.max(0, +e.target.value); drawSfx() } })
+  $('#sfxhere').onclick = () => { setTab('sound'); $('#slib').scrollIntoView({ behavior: 'smooth', block: 'center' }) }
+  async function useLibMusic(key, quiet) {
+    try {
+      const r = await fetch('audio/' + key + '.mp3'); if (!r.ok) throw new Error('ไม่พบไฟล์เพลง')
+      setMusic(new File([await r.blob()], key + '.mp3', { type: 'audio/mpeg' }), key)
+      if (!quiet) toast('ใช้เพลง ' + (MUSICLIB.find((m) => m[0] === key) || [0, key])[1])
+    } catch (e) { toast('โหลดเพลงไม่ได้: ' + e.message, true) }
+  }
+  function setMusic(f, key) {
+    if (MUSIC) MUSIC.el.pause()
+    const a = new Audio(URL.createObjectURL(f)); a.preload = 'auto'; MUSIC = { el: a, name: f.name, key: key || '' }; if (AC) hookEl(a, musicGain)
+    $('#mname').textContent = '🎵 ' + ((MUSICLIB.find((m) => m[0] === key) || [0, f.name])[1]); drawLib()
+  }
+  $('#mup').onclick = () => $('#mfile').click()
+  $('#mfile').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) { setMusic(f); toast('ใส่เพลงแล้ว') } }
+  $('#mdel').onclick = () => { if (MUSIC) { MUSIC.el.pause(); MUSIC = null } $('#mname').textContent = 'ยังไม่มีเพลง'; drawLib() }
+  $('#mvol').oninput = (e) => { $('#v-mvol').textContent = e.target.value + '%' }
+  $('#vvol').oninput = (e) => { $('#v-vvol').textContent = e.target.value + '%'; if (voiceGain) voiceGain.gain.value = e.target.value / 100 }
+  $('#cvol').oninput = (e) => { $('#v-cvol').textContent = e.target.value + '%'; if (clipBus) clipBus.gain.value = e.target.value / 100 }
+  drawLib()
+
+  /* ---------- ตัวอย่าง ---------- */
+  $('#demo').onclick = async () => {
+    try {
+      const get = async (p, n, t) => { const r = await fetch(p + n); if (!r.ok) throw new Error(n); return new File([await r.blob()], n, { type: t }) }
+      busy('กำลังโหลดตัวอย่าง…', 0.3)
+      const [v, a, b, c, d] = await Promise.all([get('samples/', 'sample_voice.mp3', 'audio/mpeg'), get('samples/', 'sample_frame.jpg', 'image/jpeg'), get('samples/', 'sample2_broll.mp4', 'video/mp4'), get('samples/', 'sample_product.jpg', 'image/jpeg'), get('samples/', 'sample1_talk.mp4', 'video/mp4')])
+      await setVoice(v); if (!POOL.length) await addPool([a, b, c, d])
+      $('#script').value = '# มะพร้าวเผา หอมหวานจากสวน\n[1] มะพร้าวเผาสด ๆ ส่งตรงจากสวน\n[2,3] หวานธรรมชาติ ไม่ใส่น้ำตาล\n[4] หอมกลิ่นเผา ดื่มเย็น ๆ ชื่นใจ\n[1] สั่งได้วันนี้ที่ Delish Foods'
+      busy(null); $('#demo').hidden = true
+      toast('โหลดตัวอย่างแล้ว กด 🤖 สร้างคลิปเบื้องต้น ได้เลย', false, 4000)
+    } catch (er) { busy(null); toast('ไม่มีไฟล์ตัวอย่างในเครื่องนี้ (ต้องอัปโฟลเดอร์ samples/ ด้วย)', true, 3500) }
+  }
+
+  /* ---------- ส่งออก ---------- */
+  function pickMime() { const L = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']; return L.find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || '' }
+  $('#fmtnote').textContent = window.MediaRecorder ? 'ไฟล์ที่ได้: ' + (pickMime().startsWith('video/mp4') ? 'MP4 (เปิดได้ทุกที่)' : 'WEBM (Chrome รุ่นใหม่ให้ MP4)') : 'เบราว์เซอร์นี้ส่งออกวิดีโอไม่ได้ ใช้ Chrome'
+  function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 8000) }
+  function busy(msg, p) {
+    let b = $('#busy'); if (msg == null) { if (b) b.remove(); return }
+    if (!b) { b = document.createElement('div'); b.className = 'busy'; b.id = 'busy'; b.innerHTML = '<div class="bx"><div id="bmsg"></div><div class="bar"><i id="bbar"></i></div><div class="note" style="color:#bfe" id="bsub"></div><button type="button" class="btn" id="bstop" hidden style="margin-top:10px">ยกเลิก</button></div>'; document.body.appendChild(b) }
+    $('#bmsg').textContent = msg; if (p != null) $('#bbar').style.width = Math.round(p * 100) + '%'
+    return b
+  }
+  $('#export').onclick = async () => {
+    if (!CL.length) return toast('สร้างคลิปก่อน', true)
+    const mime = pickMime(); if (!mime) return toast('เบราว์เซอร์นี้ส่งออกวิดีโอไม่ได้ ใช้ Chrome', true)
+    stop(); audio(); if (AC.state === 'suspended') await AC.resume()
+    await document.fonts.load('800 40px "' + ST.font + '"', 'กA').catch(() => {})
+    await Promise.all(SFXE.map((e) => sfxBuf(e.key).catch(() => null)))
+    const stream = cv.captureStream(30); dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t))
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: +$('#oq').value, audioBitsPerSecond: 160000 }), chunksR = []
+    rec.ondataavailable = (e) => { if (e.data && e.data.size) chunksR.push(e.data) }
+    let cancelled = false
+    busy('กำลังสร้างวิดีโอ… อย่าปิดหน้านี้', 0); const tt = total(); $('#bstop').hidden = false
+    $('#bstop').onclick = () => { cancelled = true; stop(); rec.stop() }
+    rec.onstop = () => {
+      busy(null); exporting = null; if (cancelled) return toast('ยกเลิกแล้ว')
+      const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm'
+      download(new Blob(chunksR, { type: mime.split(';')[0] }), ($('#oname').value.trim() || 'delish-clip') + '.' + ext)
+      toast('สร้างไฟล์วิดีโอเสร็จแล้ว (' + ext.toUpperCase() + ')', false, 3500)
+    }
+    exporting = { tick: (t) => { $('#bbar').style.width = Math.round(t / tt * 100) + '%'; $('#bsub').textContent = fmt(t) + ' / ' + fmt(tt) }, done: () => setTimeout(() => { if (rec.state !== 'inactive') rec.stop() }, 300) }
+    Object.keys(SNAP).forEach((x) => delete SNAP[x])
+    T = 0; compose(0); rec.start(250); setTimeout(play, 150)
+  }
+
+  /* ---------- อื่น ๆ ---------- */
+  function setTab(n) { $$('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === n)); $$('.pane').forEach((p) => p.classList.toggle('on', p.id === 'p-' + n)) }
+  $('#tabs').onclick = (e) => { const b = e.target.closest('[data-tab]'); if (b) { setTab(b.dataset.tab); if (b.dataset.tab === 'sound' || b.dataset.tab === 'script') drawWave() } }
+  window.addEventListener('resize', drawWave)
+  if (window.__VE_TEST) window.__VE = { GL: GL, TRANS: TRANS, GLX: () => GLX, CL: () => CL, SUBS: () => SUBS, SFXE: () => SFXE, POOL: () => POOL, VOICE: () => VOICE, total: total, seek: seek, play: play, stop: stop, T: () => T, alignLines: alignLines, parseScript: parseScript }
+  setSize(720, 1280); drawAll(); drawPool(); renderAt(0)
+})()
+</script>
+</body>
+</html>
