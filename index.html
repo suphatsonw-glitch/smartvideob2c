@@ -58,7 +58,7 @@ h3 { margin: 0 0 8px; font-size: 15px; color: var(--df); } h3 .st { display: inl
 .in { width: 100%; border: 1.5px solid var(--bd); border-radius: 10px; padding: 7px 9px; background: #fff; }
 textarea.in { resize: vertical; line-height: 1.55; }
 input[type=range] { width: 100%; accent-color: var(--green); } input[type=color] { width: 42px; height: 38px; border: 1.5px solid var(--bd); border-radius: 10px; padding: 2px; background: #fff; }
-.drop { border: 2px dashed #9cc9aa; background: var(--gl); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--df); }
+.drop { display: block; border: 2px dashed #9cc9aa; background: var(--gl); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--df); }
 .note { font-size: 12.5px; color: var(--mu); margin: 6px 0; }
 .ok { color: var(--df2); font-weight: 700; }
 .pool { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
@@ -127,7 +127,7 @@ input[type=range] { width: 100%; accent-color: var(--green); } input[type=color]
     <div class="pane on" id="p-script">
       <button type="button" class="btn s full" id="demo">🎞️ ลองด้วยตัวอย่าง (เสียงพากย์ + สคริปต์ + ภาพ มะพร้าวเผา)</button>
       <div class="step" style="margin-top:12px"><h3><span class="st">1</span>เสียงพากย์</h3>
-        <div class="drop" id="vadd">🎙️ นำเข้าไฟล์เสียงพากย์ (mp3 / m4a / wav หรือวิดีโอที่มีเสียง)</div><input type="file" id="vfile" accept="audio/*,video/*" hidden>
+        <label class="drop" id="vadd" for="vfile">🎙️ นำเข้าไฟล์เสียงพากย์ (mp3 / m4a / wav หรือวิดีโอที่มีเสียง)</label><input type="file" id="vfile" accept="audio/*,video/*" hidden>
         <p class="note" id="vinfo">ยังไม่มีเสียงพากย์ · ไม่มีก็ได้ แอปจะประมาณเวลาจากความยาวข้อความ</p></div>
       <div class="step"><h3><span class="st">2</span>สคริปต์ / สตอรี่บอร์ด</h3>
         <textarea class="in" id="script" rows="7" placeholder="1 บรรทัด = 1 ประโยคที่พากย์ (กลายเป็นซับไทย)&#10;# ข้อความหัวเรื่อง (ขึ้นจอ ไม่ได้พากย์)&#10;[1] ประโยคแรก ใช้ภาพที่ 1&#10;[2,3] ประโยคนี้ตัดสลับภาพ 2 กับ 3&#10;ประโยคที่ไม่ระบุภาพ แอปเลือกภาพถัดไปให้"></textarea>
@@ -137,7 +137,7 @@ input[type=range] { width: 100%; accent-color: var(--green); } input[type=color]
           • <code># ข้อความ</code> = หัวเรื่องตัวใหญ่ด้านบน ขึ้นพร้อมประโยคถัดไป (ไม่ต้องพากย์)<br>
           • ไม่ใส่หมายเลข = แอปใช้ภาพถัดไปตามลำดับ · คลิปเดียวกันใช้หลายประโยค จะต่อจากช่วงที่ใช้ไปแล้ว</details></div>
       <div class="step"><h3><span class="st">3</span>ภาพและคลิป <small class="note">(เลขบนรูป = เลขที่ใช้ในสคริปต์)</small></h3>
-        <div class="drop" id="madd">🖼️ เพิ่มวิดีโอ / รูป (หลายไฟล์ได้)</div><input type="file" id="mfiles" accept="video/*,image/*" multiple hidden>
+        <label class="drop" id="madd" for="mfiles">🖼️ เพิ่มวิดีโอ / รูป (หลายไฟล์ได้)</label><input type="file" id="mfiles" accept="video/*,image/*" multiple hidden>
         <div class="pool" id="pool"></div></div>
       <div class="step"><h3><span class="st">4</span>สไตล์คลิป</h3>
         <label class="lbl" style="margin-top:0">จังหวะตัดภาพ</label>
@@ -152,7 +152,7 @@ input[type=range] { width: 100%; accent-color: var(--green); } input[type=color]
     </div>
 
     <div class="pane" id="p-clips">
-      <div class="drop" id="add">➕ เพิ่มวิดีโอ / รูป ต่อท้าย</div>
+      <label class="drop" id="add" for="files">➕ เพิ่มวิดีโอ / รูป ต่อท้าย</label>
       <input type="file" id="files" accept="video/*,image/*" multiple hidden>
       <div class="row"><label style="flex:1" class="note">ระดับเสียงที่ถือว่า "เงียบ" <b id="v-thr">-40 dB</b><input type="range" id="thr" min="-60" max="-20" value="-40"></label></div>
       <button type="button" class="btn s full" id="autoall">✂️ ตัดช่วงเงียบในคลิปอัตโนมัติ (คลิปที่มีคนพูดเอง)</button>
@@ -364,31 +364,53 @@ input[type=range] { width: 100%; accent-color: var(--green); } input[type=color]
   async function previewSfx(key) { audio(); if (AC.state === 'suspended') await AC.resume(); try { const s = AC.createBufferSource(); s.buffer = await sfxBuf(key); s.connect(sfxGain); s.start() } catch (e) { toast(e.message, true) } }
 
   /* ---------- ไฟล์ ---------- */
+  const IMG_EXT = /\.(jpe?g|png|webp|gif|bmp|avif)$/i, HEIC_EXT = /\.(heic|heif)$/i, VID_EXT = /\.(mp4|m4v|mov|webm|mkv|3gp|avi)$/i
+  const BADVID = (n) => 'เปิดวิดีโอ ' + n + ' ไม่ได้ — มักเป็นไฟล์ HEVC/H.265 จาก iPhone หรือมือถือบางรุ่น ลองเปิดแอปนี้ในมือถือเครื่องที่ถ่าย หรือตั้งกล้อง iPhone: ตั้งค่า › กล้อง › รูปแบบ › "เข้ากันได้มากที่สุด"'
+  function phThumb(txt) { const c = document.createElement('canvas'); c.width = 120; c.height = 160; const g = c.getContext('2d'); g.fillStyle = '#1f6b3a'; g.fillRect(0, 0, 120, 160); g.fillStyle = '#fff'; g.font = '40px sans-serif'; g.textAlign = 'center'; g.fillText(txt, 60, 95); return c.toDataURL('image/jpeg', 0.7) }
   function loadMedia(f) {
     return new Promise((res, rej) => {
-      const url = URL.createObjectURL(f)
-      if (f.type.startsWith('image/')) { const i = new Image(); i.onload = () => res({ kind: 'image', el: i, dur: 3, url: url, file: f, thumb: url }); i.onerror = () => rej(new Error('เปิดรูปไม่ได้')); i.src = url; return }
-      const v = document.createElement('video'); v.preload = 'auto'; v.playsInline = true; v.src = url
+      const url = URL.createObjectURL(f), t = (f.type || '').toLowerCase(), n = f.name || ''
+      if (HEIC_EXT.test(n) || /hei[cf]/.test(t)) return rej(new Error('รูป ' + n + ' เป็น HEIC ซึ่งเบราว์เซอร์ส่วนใหญ่เปิดไม่ได้ — เลือกรูปจากแอป รูปภาพ ในมือถือโดยตรง หรือแปลงเป็น JPG ก่อน'))
+      const isImg = t.startsWith('image/') || (!t.startsWith('video/') && IMG_EXT.test(n))
+      if (isImg) { const i = new Image(); i.onload = () => res({ kind: 'image', el: i, dur: 3, url: url, file: f, thumb: url }); i.onerror = () => rej(new Error('เปิดรูป ' + n + ' ไม่ได้')); i.src = url; return }
+      if (!t.startsWith('video/') && !t.startsWith('audio/') && !VID_EXT.test(n)) return rej(new Error('ไฟล์ ' + n + ' ไม่ใช่รูปหรือวิดีโอ'))
+      const v = document.createElement('video'); v.preload = 'auto'; v.playsInline = true; v.muted = true; v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '')
+      let done = false
+      const fail = (m) => { if (done) return; done = true; clearTimeout(to); rej(new Error(m)) }
+      const ok = (thumb) => { if (done) return; done = true; clearTimeout(to); v.onseeked = v.ontimeupdate = null; v.muted = false; try { v.currentTime = 0 } catch (e) { /* */ } res({ kind: 'video', el: v, dur: v.duration, url: url, file: f, thumb: thumb || phThumb('🎞️') }) }
+      const grab = () => { try { if (!v.videoWidth) return null; const c = document.createElement('canvas'); c.width = 120; c.height = Math.round(120 * v.videoHeight / v.videoWidth) || 160; c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', 0.7) } catch (e) { return null } }
+      const to = setTimeout(() => { if (isFinite(v.duration) && v.duration > 0) { if (!v.videoWidth) fail(BADVID(n)); else ok(grab()) } else fail(BADVID(n)) }, 12000)
+      v.onerror = () => fail(BADVID(n))
       v.onloadedmetadata = () => {
-        const go = () => { const tc = document.createElement('canvas'); v.currentTime = Math.min(0.5, v.duration / 2); v.onseeked = () => { v.onseeked = null; tc.width = 120; tc.height = Math.round(120 * v.videoHeight / v.videoWidth) || 160; try { tc.getContext('2d').drawImage(v, 0, 0, tc.width, tc.height) } catch (e) { /* */ } v.currentTime = 0; res({ kind: 'video', el: v, dur: v.duration, url: url, file: f, thumb: tc.toDataURL('image/jpeg', 0.7) }) } }
-        if (isFinite(v.duration)) go(); else { v.currentTime = 1e9; v.ontimeupdate = () => { v.ontimeupdate = null; go() } }
+        const go = () => {
+          if (!v.videoWidth) {
+            // บางเบราว์เซอร์รู้ขนาดภาพหลังโหลดเฟรมแรก
+            v.onloadeddata = () => { if (!v.videoWidth) fail(BADVID(n)) }
+          }
+          v.onseeked = () => { v.onseeked = null; ok(grab()) }
+          try { v.currentTime = Math.min(0.5, v.duration / 2) } catch (e) { ok(null) }
+          // iPhone บางรุ่นไม่ยิง seeked จนกว่าจะเล่น → ลองเล่นแบบเงียบแล้วหยุด
+          setTimeout(() => { if (!done) { const pr = v.play(); if (pr && pr.then) pr.then(() => setTimeout(() => { v.pause(); ok(grab()) }, 300)).catch(() => {}) } }, 2500)
+        }
+        if (isFinite(v.duration) && v.duration > 0) go(); else { v.ontimeupdate = () => { if (isFinite(v.duration)) { v.ontimeupdate = null; go() } }; try { v.currentTime = 1e9 } catch (e) { /* */ } }
       }
-      v.onerror = () => rej(new Error('เปิดวิดีโอ ' + f.name + ' ไม่ได้ (รูปแบบไฟล์ไม่รองรับ)'))
+      v.src = url; try { v.load() } catch (e) { /* */ }
     })
   }
   async function addPool(fs) {
     const out = []
-    for (const f of fs) { try { const m = await loadMedia(f); const it = Object.assign({ id: uid(), name: f.name }, m); POOL.push(it); hook(it); out.push(it) } catch (er) { toast(er.message, true, 4000) } }
-    drawPool(); return out
+    let bad = 0, k = 0
+    for (const f of fs) { k++; if (fs.length > 1) toast('กำลังเปิดไฟล์ ' + k + '/' + fs.length + ' …', false, 15000); else toast('กำลังเปิดไฟล์ …', false, 15000)
+      try { const m = await loadMedia(f); const it = Object.assign({ id: uid(), name: f.name }, m); POOL.push(it); try { hook(it) } catch (e) { /* เสียงคลิปใช้ไม่ได้แต่ภาพยังใช้ได้ */ } out.push(it) } catch (er) { bad++; toast(er.message, true, 9000); await new Promise((r) => setTimeout(r, 1500)) } }
+    drawPool(); if (out.length && !bad) toast('เพิ่ม ' + out.length + ' ไฟล์แล้ว'); else if (out.length) toast('เพิ่มได้ ' + out.length + ' ไฟล์ · เปิดไม่ได้ ' + bad + ' ไฟล์ (ดูข้อความก่อนหน้า)', true, 7000)
+    return out
   }
   function drawPool() {
     $('#pool').innerHTML = POOL.map((m, i) => '<div class="it"><img alt="" src="' + m.thumb + '"><b>' + (i + 1) + '</b><button type="button" class="x" data-pdel="' + m.id + '" title="เอาออก">✕</button><small>' + (m.kind === 'video' ? '🎞️ ' + fmt(m.dur) : '🖼️ รูป') + ' · ' + esc(m.name) + '</small></div>').join('') || '<p class="note" style="grid-column:1/-1">ยังไม่มีภาพ/คลิป</p>'
   }
   $('#pool').onclick = (e) => { const d = e.target.closest('[data-pdel]'); if (!d) return; const m = POOL.find((x) => x.id === d.dataset.pdel); if (CL.some((c) => c.m === m)) return toast('ภาพนี้ยังใช้อยู่ในคลิป ลบในแท็บ คลิป ก่อน', true); POOL = POOL.filter((x) => x !== m); drawPool() }
-  $('#madd').onclick = () => $('#mfiles').click()
   $('#mfiles').onchange = (e) => { const fs = [...e.target.files]; e.target.value = ''; addPool(fs) }
   const clipOf = (m, a, b, extra) => Object.assign({ id: uid(), m: m, kind: m.kind, name: m.name, el: m.el, file: m.file, dur: m.dur, in: a, out: b, hold: 0, filter: 'none', trans: 'none', kb: true, vol: 1 }, extra || {})
-  $('#add').onclick = () => $('#files').click()
   $('#files').onchange = async (e) => { const fs = [...e.target.files]; e.target.value = ''; const items = await addPool(fs); items.forEach((m) => CL.push(clipOf(m, 0, m.dur, { trans: CL.length ? 'fade' : 'none' }))); sel = CL.length - 1; drawAll(); seek(T) }
   ;['dragover', 'drop'].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); if (ev === 'drop' && e.dataTransfer.files.length) addPool([...e.dataTransfer.files]) }))
   // เสียงพากย์
@@ -403,7 +425,6 @@ input[type=range] { width: 100%; accent-color: var(--green); } input[type=color]
     $('#vinfo').innerHTML = '<span class="ok">' + esc(txt) + '</span>'; $('#vinfo2').textContent = txt
     drawWave(); return VOICE
   }
-  $('#vadd').onclick = () => $('#vfile').click()
   $('#vfile').onchange = async (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) { await setVoice(f); toast('นำเข้าเสียงพากย์แล้ว') } }
 
   /* ---------- สร้างคลิปจากสคริปต์ ---------- */
